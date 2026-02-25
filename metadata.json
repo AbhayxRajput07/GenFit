@@ -1,0 +1,8 @@
+{
+  "name": "Genfit",
+  "description": "A next-generation health tracking platform powered by Gemini AI. Features intelligent nutrition analysis, personalized wellness coaching, and advanced data visualization.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}
