@@ -1,0 +1,7 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": "vite",
+  "installCommand": "cd genfit-frontend && npm install",
+  "buildCommand": "cd genfit-frontend && npm run build",
+  "outputDirectory": "genfit-frontend/dist"
+}
