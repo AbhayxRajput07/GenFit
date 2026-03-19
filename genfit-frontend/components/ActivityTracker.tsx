@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
-import { ActivityData, DailyStats } from '../types';
+import { ActivityData, DailyStats, Theme } from '../types';
 import { Plus, Clock, BarChart3, TrendingUp, Flame, Trophy, Activity } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, CartesianGrid } from 'recharts';
@@ -8,6 +8,7 @@ interface ActivityTrackerProps {
   addActivity: (activity: ActivityData) => void;
   activities: ActivityData[];
   stats: DailyStats;
+  theme: Theme;
 }
 
 const workoutOptions = [
@@ -59,7 +60,28 @@ const workoutOptions = [
   { name: 'Mountain Biking', icon: '🚵', category: 'Outdoor', color: '#ea580c' }
 ];
 
-const ActivityTracker: React.FC<ActivityTrackerProps> = ({ addActivity, activities, stats }) => {
+const ActivityTracker: React.FC<ActivityTrackerProps> = ({ addActivity, activities, stats, theme }) => {
+  const isPink = theme === 'pink';
+
+  const colors = {
+    bgGradient: isPink 
+      ? 'from-[#ffeef4] via-[#fff4f8] to-[#fff7fb]' 
+      : 'from-[#0a192f] via-[#0f172a] to-[#0a192f]',
+    cardBg: isPink ? 'bg-white' : 'bg-[#1e293b]',
+    cardBorder: isPink ? 'border-[#f1d9e2]' : 'border-[#334155]',
+    textMain: isPink ? 'text-slate-900' : 'text-slate-100',
+    textSub: isPink ? 'text-slate-500' : 'text-slate-400',
+    textAccent: isPink ? 'text-[#bf5f7e]' : 'text-[#60a5fa]',
+    accentPrimary: isPink ? '#db2777' : '#38bdf8',
+    iconAccent: isPink ? 'text-[#db2777]' : 'text-[#38bdf8]',
+    iconBg: isPink ? 'bg-[#ffe8f1]' : 'bg-blue-900/40',
+    buttonBg: isPink ? 'bg-[#db2777]' : 'bg-blue-600',
+    buttonHover: isPink ? 'hover:bg-[#be185d]' : 'hover:bg-blue-500',
+    inputBg: isPink ? 'bg-[#fffdf9]' : 'bg-[#0f172a]',
+    inputRing: isPink ? 'ring-pink-100' : 'ring-blue-900/30',
+    tagBg: isPink ? 'bg-[#ffe8f1]' : 'bg-blue-900/20',
+    chartGrid: isPink ? '#efd7e2' : '#334155',
+  };
   const [type, setType] = useState('');
   const [duration, setDuration] = useState('');
   const [intensity, setIntensity] = useState<'Low' | 'Medium' | 'High'>('Medium');
@@ -126,20 +148,20 @@ const ActivityTracker: React.FC<ActivityTrackerProps> = ({ addActivity, activiti
   const categories = ['All', 'Cardio', 'Strength', 'Sports', 'Wellness'];
 
   return (
-    <div className="min-h-screen pb-20 bg-gradient-to-b from-[#ffeef4] via-[#fff4f8] to-[#fff7fb]">
+    <div className={`min-h-screen pb-20 bg-gradient-to-b ${colors.bgGradient} ${colors.textMain}`}>
       <div className="relative z-10 max-w-6xl mx-auto px-6 pt-10 space-y-6">
         {/* Header */}
         <motion.div initial={{ opacity: 0, y: -16 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <div className="flex items-center gap-3 mb-1">
-              <div className="p-2.5 rounded-xl bg-[#ffe8f1] border border-[#efc7d6]">
-                <Activity size={24} className="text-[#bf5f7e]" />
+            <div className={`flex items-center gap-3 mb-1`}>
+              <div className={`p-2.5 rounded-xl ${colors.iconBg} border ${colors.cardBorder}`}>
+                <Activity size={24} className={colors.accentPrimary.startsWith('#') ? '' : colors.accentPrimary} style={{ color: colors.accentPrimary.startsWith('#') ? colors.accentPrimary : undefined }} />
               </div>
-              <h1 className="text-4xl font-bold tracking-tight text-slate-900">Activity</h1>
+              <h1 className={`text-4xl font-bold tracking-tight ${colors.textMain}`}>Activity</h1>
             </div>
-            <p className="text-sm text-slate-500 ml-16">Track workouts, monitor intensity, and burn calories</p>
+            <p className={`text-sm ${colors.textSub} ml-16`}>Track workouts, monitor intensity, and burn calories</p>
           </div>
-          <button className="flex items-center gap-2 text-sm font-semibold text-slate-600 hover:text-slate-800 transition-all px-4 py-2 rounded-lg border border-[#efc7d6] bg-white shadow-sm">
+          <button className={`flex items-center gap-2 text-sm font-semibold ${colors.textSub} hover:${colors.textMain} transition-all px-4 py-2 rounded-lg border ${colors.cardBorder} ${colors.cardBg} shadow-sm`}>
             <TrendingUp size={14} /> Stats
           </button>
         </motion.div>
@@ -149,14 +171,14 @@ const ActivityTracker: React.FC<ActivityTrackerProps> = ({ addActivity, activiti
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.03 }}
-          className="bg-white rounded-2xl p-6 border border-[#f1d9e2] shadow-sm"
+          className={`${colors.cardBg} rounded-2xl p-6 border ${colors.cardBorder} shadow-sm`}
         >
           <div className="mb-4 flex items-center justify-between gap-3">
             <div>
-              <p className="text-sm font-semibold text-[#bf5f7e] uppercase tracking-wide">Quick Entry</p>
-              <h3 className="text-3xl font-bold text-slate-900">Select Activity</h3>
+              <p className={`text-sm font-semibold ${colors.textAccent} uppercase tracking-wide`}>Quick Entry</p>
+              <h3 className={`text-3xl font-bold ${colors.textMain}`}>Select Activity</h3>
             </div>
-            <span className="px-3 py-1 rounded-md text-sm bg-[#ffe8f1] text-[#bf5f7e] font-semibold border border-[#efc7d6]">Fast</span>
+            <span className={`px-3 py-1 rounded-md text-sm ${colors.tagBg} ${colors.textAccent} font-semibold border ${colors.cardBorder}`}>Fast</span>
           </div>
 
           <div className="mb-4">
@@ -167,8 +189,8 @@ const ActivityTracker: React.FC<ActivityTrackerProps> = ({ addActivity, activiti
                   onClick={() => setType(opt.name)}
                   className={`px-4 py-3 rounded-lg text-sm font-semibold border transition-all flex items-center gap-2 ${
                     type === opt.name
-                      ? 'bg-[#db2777] text-white border-[#be185d] shadow-sm'
-                      : 'bg-white border-[#efc7d6] text-slate-700 hover:border-[#efc7d6] hover:bg-[#fff1f7]'
+                      ? `${colors.buttonBg} text-white border-transparent shadow-sm`
+                      : `${colors.cardBg} ${colors.cardBorder} ${colors.textSub} hover:${colors.textMain} hover:${isPink ? 'bg-[#fff1f7]' : 'bg-blue-900/10'}`
                   }`}
                 >
                   <span className="text-base">{opt.icon}</span>
@@ -189,7 +211,7 @@ const ActivityTracker: React.FC<ActivityTrackerProps> = ({ addActivity, activiti
                 }}
                 onFocus={() => setShowExerciseSearch(true)}
                 placeholder="Search exercise..."
-                className="w-full px-5 py-3 bg-[#fffdf9] rounded-lg outline-none border border-[#e7d9de] focus:ring-4 ring-pink-100 text-base"
+                className={`w-full px-5 py-3 ${colors.inputBg} ${colors.textMain} rounded-lg outline-none border ${colors.cardBorder} focus:ring-4 ${colors.inputRing} text-base`}
               />
               {showExerciseSearch && (
                 <div className="absolute z-20 mt-2 w-full rounded-xl border border-[#efc7d6] bg-white shadow-lg max-h-64 overflow-y-auto">
@@ -205,8 +227,8 @@ const ActivityTracker: React.FC<ActivityTrackerProps> = ({ addActivity, activiti
                           setExerciseQuery(exercise.name);
                           setShowExerciseSearch(false);
                         }}
-                        className={`w-full px-4 py-3 text-left flex items-center justify-between gap-3 border-b border-[#f8dde8] last:border-b-0 hover:bg-[#fff4f8] transition-colors ${
-                          type === exercise.name ? 'bg-[#ffe9f3]' : 'bg-white'
+                        className={`w-full px-4 py-3 text-left flex items-center justify-between gap-3 border-b ${isPink ? 'border-[#f8dde8]' : 'border-slate-700/50'} last:border-b-0 hover:${isPink ? 'bg-[#fff4f8]' : 'bg-blue-900/20'} transition-colors ${
+                          type === exercise.name ? (isPink ? 'bg-[#ffe9f3]' : 'bg-blue-900/40') : colors.cardBg
                         }`}
                       >
                         <span className="flex items-center gap-3 min-w-0">
@@ -228,12 +250,12 @@ const ActivityTracker: React.FC<ActivityTrackerProps> = ({ addActivity, activiti
               value={duration}
               onChange={(e) => setDuration(e.target.value)}
               placeholder="Duration (min)"
-              className="flex-1 px-5 py-4 bg-[#fffdf9] rounded-lg outline-none border border-[#e7d9de] focus:ring-4 ring-pink-100 text-base"
+              className={`flex-1 px-5 py-4 ${colors.inputBg} ${colors.textMain} rounded-lg outline-none border ${colors.cardBorder} focus:ring-4 ${colors.inputRing} text-base`}
             />
             <select
               value={intensity}
               onChange={(e) => setIntensity(e.target.value as any)}
-              className="px-5 py-4 rounded-lg bg-[#fffdf9] border border-[#e7d9de] font-semibold outline-none text-slate-900"
+              className={`px-5 py-4 rounded-lg ${colors.inputBg} border ${colors.cardBorder} font-semibold outline-none ${colors.textMain}`}
             >
               <option>Low</option>
               <option>Medium</option>
@@ -242,7 +264,7 @@ const ActivityTracker: React.FC<ActivityTrackerProps> = ({ addActivity, activiti
             <button
               onClick={saveActivity}
               disabled={!type || !duration}
-              className="bg-[#db2777] text-white px-8 py-4 rounded-lg font-semibold flex items-center justify-center gap-2 border border-[#be185d] hover:bg-[#be185d] transition-all disabled:opacity-50"
+              className={`w-full lg:w-auto ${colors.buttonBg} text-white px-8 py-4 rounded-lg font-semibold flex items-center justify-center gap-2 border-transparent ${colors.buttonHover} transition-all disabled:opacity-50`}
             >
               <Plus size={18} />
               Add
@@ -250,9 +272,9 @@ const ActivityTracker: React.FC<ActivityTrackerProps> = ({ addActivity, activiti
           </div>
 
           {type && duration && (
-            <div className="p-4 rounded-lg border border-[#f0cddd] bg-[#fff1f7]">
-              <p className="text-sm text-[#bf5f7e] mb-1">Estimated Calories Burned</p>
-              <p className="text-2xl font-bold text-slate-900">{Number(duration) * (intensity === 'High' ? 12 : intensity === 'Medium' ? 8 : 4)} kcal</p>
+            <div className={`p-4 rounded-lg border ${colors.cardBorder} ${isPink ? 'bg-[#fff1f7]' : 'bg-blue-900/10'}`}>
+              <p className={`text-sm ${colors.textAccent} mb-1`}>Estimated Calories Burned</p>
+              <p className={`text-2xl font-bold ${colors.textMain}`}>{Number(duration) * (intensity === 'High' ? 12 : intensity === 'Medium' ? 8 : 4)} kcal</p>
             </div>
           )}
         </motion.div>
@@ -264,28 +286,28 @@ const ActivityTracker: React.FC<ActivityTrackerProps> = ({ addActivity, activiti
           transition={{ delay: 0.05 }}
           className="grid grid-cols-2 md:grid-cols-4 gap-4"
         >
-          <div className="bg-white rounded-xl p-4 border border-[#f1d9e2] shadow-sm">
-            <p className="text-sm text-[#bf5f7e] font-semibold mb-1">Today's Duration</p>
-            <p className="text-2xl font-bold text-slate-900">{totalDurationToday}</p>
-            <p className="text-xs text-slate-500 mt-1">minutes</p>
+          <div className={`${colors.cardBg} rounded-xl p-4 border ${colors.cardBorder} shadow-sm`}>
+            <p className={`text-sm ${colors.textAccent} font-semibold mb-1`}>Today's Duration</p>
+            <p className={`text-2xl font-bold ${colors.textMain}`}>{totalDurationToday}</p>
+            <p className={`text-xs ${colors.textSub} mt-1`}>minutes</p>
           </div>
 
-          <div className="bg-white rounded-xl p-4 border border-[#f1d9e2] shadow-sm">
-            <p className="text-sm text-[#bf5f7e] font-semibold mb-1">Calories Burned</p>
-            <p className="text-2xl font-bold text-slate-900">{totalCaloriesToday}</p>
-            <p className="text-xs text-slate-500 mt-1">kcal</p>
+          <div className={`${colors.cardBg} rounded-xl p-4 border ${colors.cardBorder} shadow-sm`}>
+            <p className={`text-sm ${colors.textAccent} font-semibold mb-1`}>Calories Burned</p>
+            <p className={`text-2xl font-bold ${colors.textMain}`}>{totalCaloriesToday}</p>
+            <p className={`text-xs ${colors.textSub} mt-1`}>kcal</p>
           </div>
 
-          <div className="bg-white rounded-xl p-4 border border-[#f1d9e2] shadow-sm">
-            <p className="text-sm text-[#bf5f7e] font-semibold mb-1">Sessions Today</p>
-            <p className="text-2xl font-bold text-slate-900">{todayActivities.length}</p>
-            <p className="text-xs text-slate-500 mt-1">workouts</p>
+          <div className={`${colors.cardBg} rounded-xl p-4 border ${colors.cardBorder} shadow-sm`}>
+            <p className={`text-sm ${colors.textAccent} font-semibold mb-1`}>Sessions Today</p>
+            <p className={`text-2xl font-bold ${colors.textMain}`}>{todayActivities.length}</p>
+            <p className={`text-xs ${colors.textSub} mt-1`}>workouts</p>
           </div>
 
-          <div className="bg-white rounded-xl p-4 border border-[#f1d9e2] shadow-sm">
-            <p className="text-sm text-[#bf5f7e] font-semibold mb-1">Avg Intensity</p>
-            <p className="text-2xl font-bold text-slate-900">{todayActivities.length > 0 ? (todayActivities.filter(a => a.intensity === 'High').length / todayActivities.length * 100).toFixed(0) : 0}%</p>
-            <p className="text-xs text-slate-500 mt-1">high intensity</p>
+          <div className={`${colors.cardBg} rounded-xl p-4 border ${colors.cardBorder} shadow-sm`}>
+            <p className={`text-sm ${colors.textAccent} font-semibold mb-1`}>Avg Intensity</p>
+            <p className={`text-2xl font-bold ${colors.textMain}`}>{todayActivities.length > 0 ? (todayActivities.filter(a => a.intensity === 'High').length / todayActivities.length * 100).toFixed(0) : 0}%</p>
+            <p className={`text-xs ${colors.textSub} mt-1`}>high intensity</p>
           </div>
         </motion.div>
 
@@ -296,8 +318,8 @@ const ActivityTracker: React.FC<ActivityTrackerProps> = ({ addActivity, activiti
           transition={{ delay: 0.1 }}
           className="bg-white rounded-2xl p-6 border border-[#f1d9e2] shadow-sm"
         >
-          <h2 className="text-2xl font-bold text-slate-900 mb-6 flex items-center gap-2">
-            <BarChart3 size={20} className="text-[#db2777]" /> Weekly Activity Overview
+          <h2 className={`text-2xl font-bold ${colors.textMain} mb-6 flex items-center gap-2`}>
+            <BarChart3 size={20} className={colors.accentPrimary.startsWith('#') ? '' : colors.accentPrimary} style={{ color: colors.accentPrimary.startsWith('#') ? colors.accentPrimary : undefined }} /> Weekly Activity Overview
           </h2>
           <div className="h-80">
             <ResponsiveContainer width="100%" height="100%">
@@ -312,13 +334,15 @@ const ActivityTracker: React.FC<ActivityTrackerProps> = ({ addActivity, activiti
                 <XAxis dataKey="name" stroke="#caa2b4" axisLine={{ strokeWidth: 1.2 }} tickLine={false} />
                 <YAxis stroke="#caa2b4" axisLine={{ strokeWidth: 1.2 }} tickLine={false} />
                 <Tooltip
-                  cursor={{ fill: '#ffe9f3' }}
+                  cursor={{ fill: isPink ? '#ffe9f3' : '#334155' }}
                   contentStyle={{
                     borderRadius: '12px',
-                    border: '1px solid #efc7d6',
-                    backgroundColor: '#fff',
+                    border: `1px solid ${colors.cardBorder}`,
+                    backgroundColor: isPink ? '#fff' : '#1e293b',
+                    color: isPink ? '#000' : '#fff',
                     fontWeight: 700
                   }}
+                  itemStyle={{ color: isPink ? '#000' : '#fff' }}
                 />
                 <Bar dataKey="burn" radius={[10, 10, 0, 0]} barSize={52}>
                   {weeklyData.map((entry, index) => (
@@ -356,7 +380,7 @@ const ActivityTracker: React.FC<ActivityTrackerProps> = ({ addActivity, activiti
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: i * 0.05 }}
                     key={activity.id}
-                    className="p-4 rounded-xl border border-[#efd7e2] bg-[#fff1f7] hover:bg-white transition-colors"
+                    className={`p-4 rounded-xl border ${colors.cardBorder} ${isPink ? 'bg-[#fff1f7] hover:bg-white' : 'bg-blue-900/10 hover:bg-blue-900/20'} transition-colors`}
                   >
                     <div className="flex items-start justify-between">
                       <div className="flex items-start gap-3 flex-1">
@@ -398,28 +422,28 @@ const ActivityTracker: React.FC<ActivityTrackerProps> = ({ addActivity, activiti
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.25 }}
-          className="bg-white rounded-2xl p-6 border border-[#f1d9e2] shadow-sm text-slate-900"
+          className={`${colors.cardBg} rounded-2xl p-6 border ${colors.cardBorder} shadow-sm ${colors.textMain}`}
         >
           <div className="flex items-center justify-between mb-6">
             <div>
-              <p className="text-sm text-[#bf5f7e] font-semibold">Your Achievement</p>
+              <p className={`text-sm ${colors.textAccent} font-semibold`}>Your Achievement</p>
               <h2 className="text-3xl font-bold mt-2">Keep it Going!</h2>
             </div>
-            <Trophy size={32} className="text-[#db2777]" />
+            <Trophy size={32} className={colors.accentPrimary.startsWith('#') ? '' : colors.accentPrimary} style={{ color: colors.accentPrimary.startsWith('#') ? colors.accentPrimary : undefined }} />
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-            <div className="p-4 rounded-xl bg-[#fff1f7] border border-[#efc7d6]">
-              <p className="text-sm text-slate-600 mb-1">Total Distance</p>
-              <p className="text-2xl font-bold text-slate-900">{todayActivities.length > 0 ? (totalDurationToday * 0.1).toFixed(1) : 0} km</p>
+            <div className={`p-4 rounded-xl ${isPink ? 'bg-[#fff1f7]' : 'bg-blue-900/10'} border ${colors.cardBorder}`}>
+              <p className={`text-sm ${colors.textSub} mb-1`}>Total Distance</p>
+              <p className={`text-2xl font-bold ${colors.textMain}`}>{todayActivities.length > 0 ? (totalDurationToday * 0.1).toFixed(1) : 0} km</p>
             </div>
-            <div className="p-4 rounded-xl bg-[#fff1f7] border border-[#efc7d6]">
-              <p className="text-sm text-slate-600 mb-1">Max Intensity</p>
-              <p className="text-2xl font-bold text-slate-900">{todayActivities.length > 0 ? (todayActivities.some(a => a.intensity === 'High') ? 'High' : 'Medium') : 'None'}</p>
+            <div className={`p-4 rounded-xl ${isPink ? 'bg-[#fff1f7]' : 'bg-blue-900/10'} border ${colors.cardBorder}`}>
+              <p className={`text-sm ${colors.textSub} mb-1`}>Max Intensity</p>
+              <p className={`text-2xl font-bold ${colors.textMain}`}>{todayActivities.length > 0 ? (todayActivities.some(a => a.intensity === 'High') ? 'High' : 'Medium') : 'None'}</p>
             </div>
-            <div className="p-4 rounded-xl bg-[#fff1f7] border border-[#efc7d6]">
-              <p className="text-sm text-slate-600 mb-1">Active Days</p>
-              <p className="text-2xl font-bold text-slate-900">{Math.floor(totalDurationToday / 30)}</p>
+            <div className={`p-4 rounded-xl ${isPink ? 'bg-[#fff1f7]' : 'bg-blue-900/10'} border ${colors.cardBorder}`}>
+              <p className={`text-sm ${colors.textSub} mb-1`}>Active Days</p>
+              <p className={`text-2xl font-bold ${colors.textMain}`}>{Math.floor(totalDurationToday / 30)}</p>
             </div>
           </div>
         </motion.div>

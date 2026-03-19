@@ -8,7 +8,7 @@ import {
   Zap, ShieldCheck, Brain, Utensils, Dumbbell,
   ChevronRight, ChevronLeft, RefreshCcw, Droplets,
   Flame, Target, Scale, Ruler, User, Heart,
-  TrendingUp, Award, AlertCircle, CheckCircle
+  TrendingUp, Award, AlertCircle, CheckCircle, Activity
 } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 
@@ -480,9 +480,3 @@ export default function BodyBlueprint({ activities, nutrition, stats, theme, bod
   );
 }
 
-// small alias for missing import
-const Activity = ({ size, style, className }: { size?: number; style?: React.CSSProperties; className?: string }) => (
-  <svg xmlns="http://www.w3.org/2000/svg" width={size ?? 24} height={size ?? 24} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" style={style} className={className}>
-    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
-  </svg>
-);

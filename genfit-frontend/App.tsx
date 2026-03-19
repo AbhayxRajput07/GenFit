@@ -15,7 +15,10 @@ import LandingPage from "./pages/LandingPage";
 const App: React.FC = () => {
   const [currentView, setView] = useState<ViewState>(ViewState.DASHBOARD);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [theme, setTheme] = useState<Theme>('pink');
+  const [theme, setTheme] = useState<Theme>(() => {
+    const saved = localStorage.getItem('genfit_theme');
+    return (saved as Theme) || 'pink';
+  });
   const [user, setUser] = useState<any>(null);
   const [bodyProfile, setBodyProfile] = useState<any>(() => {
     const saved = localStorage.getItem('bodyProfile');
@@ -74,6 +77,11 @@ const App: React.FC = () => {
     localStorage.setItem('bodyProfile', JSON.stringify(bodyProfile));
   }, [bodyProfile]);
 
+  // Save theme
+  useEffect(() => {
+    localStorage.setItem('genfit_theme', theme);
+  }, [theme]);
+
   // Auto stats calculation
   useEffect(() => {
     const totalCaloriesIn = nutrition.reduce((a, c) => a + c.calories, 0);
@@ -87,35 +95,41 @@ const App: React.FC = () => {
   }, [nutrition, activities]);
 
   const renderView = () => {
+    // Add theme as key to force re-mount and fresh color evaluation
     switch (currentView) {
       case ViewState.DASHBOARD:
-        return <Dashboard stats={stats} activities={activities} nutrition={nutrition} />;
+        return <Dashboard key={theme} stats={stats} activities={activities} nutrition={nutrition} theme={theme} />;
 
       case ViewState.NUTRITION:
         return (
           <NutritionTracker
+            key={theme}
             addNutrition={(i) => setNutrition(prev => [...prev, i])}
             history={nutrition}
             stats={stats}
             updateWater={updateWater}
+            theme={theme}
           />
         );
 
       case ViewState.ACTIVITY:
         return (
           <ActivityTracker
+            key={theme}
             addActivity={(i) => setActivities(prev => [...prev, i])}
             activities={activities}
             stats={stats}
+            theme={theme}
           />
         );
 
       case ViewState.COACH:
-        return <AICoach stats={stats} theme={theme} />;
+        return <AICoach key={theme} stats={stats} theme={theme} />;
       
       case ViewState.BODY_BLUEPRINT:
         return (
           <BodyBlueprint 
+            key={theme}
             activities={activities} 
             nutrition={nutrition} 
             stats={stats} 
@@ -128,6 +142,7 @@ const App: React.FC = () => {
       case ViewState.PROFILE:
         return (
           <Profile 
+            key={theme}
             user={user} 
             stats={stats} 
             activities={activities} 
@@ -138,6 +153,7 @@ const App: React.FC = () => {
       case ViewState.SETTINGS:
         return (
           <Settings 
+            key={theme}
             user={user} 
             theme={theme} 
             setTheme={setTheme} 
@@ -146,7 +162,7 @@ const App: React.FC = () => {
         );
 
       default:
-        return <Dashboard stats={stats} activities={activities} nutrition={nutrition} />;
+        return <Dashboard key={theme} stats={stats} activities={activities} nutrition={nutrition} theme={theme} />;
     }
   };
 
@@ -156,7 +172,7 @@ const App: React.FC = () => {
   }
 
   return (
-    <div className={`flex min-h-screen w-full bg-gradient-to-br transition-colors duration-700 ${theme === 'pink' ? 'from-white via-rose-50 to-pink-100' : 'from-[#0a192f] via-[#0f172a] to-[#0a192f]'} text-black`}>
+    <div className={`flex min-h-screen w-full bg-gradient-to-br transition-colors duration-700 ${theme === 'pink' ? 'from-white via-rose-50 to-pink-100 text-black' : 'from-[#0a192f] via-[#0f172a] to-[#0a192f] text-white'}`}>
       
       <Navigation 
         currentView={currentView} 
@@ -178,7 +194,7 @@ const App: React.FC = () => {
         {isMobileMenuOpen && (
           <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm p-6">
             <button onClick={() => setIsMobileMenuOpen(false)}>
-              <X className="w-8 h-8 text-black" />
+              <X className={`w-8 h-8 ${theme === 'pink' ? 'text-black' : 'text-white'}`} />
             </button>
           </div>
         )}

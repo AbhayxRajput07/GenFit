@@ -46,3 +46,13 @@ export enum ViewState {
   PROFILE = 'PROFILE',
   SETTINGS = 'SETTINGS'
 }
+
+export type ActivityLevel = 'sedentary' | 'light' | 'moderate' | 'active' | 'very_active';
+
+export interface BodyProfile {
+  gender: 'male' | 'female';
+  age: number;
+  height: number;
+  weight: number;
+  activityLevel: ActivityLevel;
+}
