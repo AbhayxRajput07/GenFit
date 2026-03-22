@@ -20,7 +20,6 @@ const Navigation: React.FC<NavigationProps> = ({ currentView, setView, user, the
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
   const [loading, setLoading] = useState(false);
-  const isBlue = theme === 'blue';
 
   const navItems = [
     { id: ViewState.DASHBOARD, label: t('nav.dashboard'), icon: LayoutDashboard },
@@ -46,111 +45,146 @@ const Navigation: React.FC<NavigationProps> = ({ currentView, setView, user, the
 
   return (
     <>
-      <nav className={`hidden md:flex flex-col w-72 border-r h-screen sticky top-0 p-6 transition-colors duration-500 ${isBlue ? 'bg-[#0a192f] border-blue-500/20' : 'bg-[#ffeef4] border-[#f1d9e2]'}`}>
+      {/* PREMIUM DARK NAVY SIDEBAR */}
+      <nav className="hidden md:flex flex-col w-72 border-r border-white/5 h-screen sticky top-0 p-6 transition-colors duration-500 bg-[#020202]/80 backdrop-blur-2xl shadow-[10px_0_50px_rgba(0,0,0,0.5)] z-40">
+        
+        {/* Animated Background Glow */}
+        <div className="absolute top-0 left-0 w-full h-40 bg-gradient-to-b from-blue-500/10 to-transparent pointer-events-none" />
+
         {/* Logo */}
-        <div className="flex items-center gap-3 mb-12 px-2">
-          <div className={`w-10 h-10 rounded-xl border flex items-center justify-center shadow-sm ${isBlue ? 'bg-blue-900/50 border-blue-500/30' : 'bg-[#ffe8f1] border-[#efc7d6]'}`}>
-            <Activity className={`w-5 h-5 ${isBlue ? 'text-blue-400' : 'text-pink-500'}`} />
+        <div className="flex items-center gap-4 mb-14 px-2 relative z-10 text-white">
+          <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-blue-500/10 border border-blue-500/30 shadow-[0_0_20px_rgba(59,130,246,0.2)]">
+            <Activity className="w-5 h-5 text-blue-400" />
           </div>
-          <h1 className={`text-2xl font-bold ${isBlue ? 'text-white' : 'text-gray-800'}`}>Genfit</h1>
+          <h1 className="text-2xl font-bold tracking-tight">GenFit.</h1>
         </div>
 
         {/* Nav Items */}
-        <div className="space-y-3 flex-1">
+        <div className="space-y-2 flex-1 relative z-10">
           {navItems.map((item) => {
             const Icon = item.icon;
             const isActive = currentView === item.id;
             return (
-              <button key={item.id} onClick={() => setView(item.id)}
-                className={`w-full flex items-center gap-3 px-5 py-3 rounded-xl border transition-all ${isActive
-                  ? (isBlue ? 'bg-blue-500/20 text-blue-300 border-blue-500/40 shadow-md' : 'bg-[#ffe8f1] text-[#bf5f7e] border-[#efc7d6] shadow-sm')
-                  : (isBlue ? 'bg-transparent text-gray-400 hover:text-blue-300 hover:bg-blue-500/10 border-transparent' : 'bg-transparent text-gray-600 hover:text-[#bf5f7e] hover:bg-[#fff1f7] border-transparent')
-                }`}>
-                <Icon className="w-5 h-5" />{item.label}
+              <button 
+                key={item.id} 
+                onClick={() => setView(item.id)}
+                className={`w-full flex items-center gap-4 px-5 py-3.5 rounded-2xl border transition-all duration-300 ${
+                  isActive
+                    ? 'bg-blue-500/10 text-white border-blue-500/30 shadow-[0_0_15px_rgba(59,130,246,0.1)]'
+                    : 'bg-transparent text-white/50 hover:text-white border-transparent hover:bg-white/[0.03]'
+                }`}
+              >
+                <Icon className={`w-5 h-5 ${isActive ? 'text-blue-400' : 'opacity-70'}`} />
+                <span className={`font-medium tracking-wide ${isActive ? '' : 'font-light'}`}>{item.label}</span>
               </button>
             );
           })}
         </div>
 
-        {/* Account */}
-        {user ? (
-          <button onClick={() => setView(ViewState.SETTINGS)}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl border transition ${isBlue ? 'bg-[#112240] border-blue-500/20 text-white hover:bg-[#1a365d]' : 'bg-white border-[#efc7d6] text-gray-700 hover:bg-[#fff1f7]'}`}>
-            <div className={`w-10 h-10 rounded-full overflow-hidden shrink-0 border border-white/30 ${isBlue ? 'bg-gradient-to-tr from-blue-500 to-cyan-500' : 'bg-gradient-to-tr from-pink-300 to-rose-300'}`}>
-              <img src={`https://api.dicebear.com/7.x/fun-emoji/svg?seed=${user?.name || user?.email || 'user'}`} alt="avatar" className="w-full h-full object-cover" />
-            </div>
-            <div className="text-left flex-1 overflow-hidden">
-              <p className="font-bold truncate text-sm leading-tight">{user.name || t('profile.defaults.name')}</p>
-              <p className="text-xs opacity-60 truncate leading-tight mt-0.5">{t('nav.settings_tagline') || 'Settings & Theme'}</p>
-            </div>
-          </button>
-        ) : (
-          <button onClick={() => setShowAccount(true)}
-            className={`w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl border shadow-sm transition ${isBlue ? 'bg-blue-500 text-white border-blue-500 hover:bg-blue-400' : 'bg-[#db2777] text-white border-[#be185d] hover:bg-[#be185d]'}`}>
-            <User className="w-5 h-5" /><span className="font-bold text-sm tracking-wide">{t('auth.switch_login')} / {t('auth.switch_signup')}</span>
-          </button>
-        )}
+        {/* Premium Account Widget */}
+        <div className="relative z-10 pt-6">
+          {user ? (
+            <button 
+              onClick={() => setView(ViewState.SETTINGS)}
+              className="w-full flex items-center gap-3 px-4 py-3 rounded-2xl border border-white/5 bg-white/[0.02] hover:bg-white/[0.05] transition-colors text-white"
+            >
+              <div className="w-10 h-10 rounded-full overflow-hidden shrink-0 border border-white/10 bg-gradient-to-tr from-blue-900 to-black">
+                <img src={`https://api.dicebear.com/7.x/fun-emoji/svg?seed=${user?.name || user?.email || 'user'}`} alt="avatar" className="w-full h-full object-cover opacity-90" />
+              </div>
+              <div className="text-left flex-1 overflow-hidden">
+                <p className="font-semibold truncate text-sm tracking-wide text-white/90">{user.name || t('profile.defaults.name')}</p>
+                <p className="text-[10px] font-bold tracking-widest uppercase text-white/30 truncate mt-0.5">{t('nav.settings_tagline') || 'Settings & Theme'}</p>
+              </div>
+            </button>
+          ) : (
+            <button 
+              onClick={() => setShowAccount(true)}
+              className="group relative w-full flex items-center justify-center gap-3 px-4 py-4 rounded-2xl border border-blue-500/30 bg-blue-500/10 hover:bg-blue-500/20 text-white transition-all shadow-[0_0_20px_rgba(59,130,246,0.15)]"
+            >
+              <User className="w-4 h-4 text-blue-300" />
+              <span className="font-bold text-xs tracking-[0.1em] uppercase">{t('auth.switch_login')} / {t('auth.switch_signup')}</span>
+              <div className="absolute inset-0 rounded-2xl border border-blue-400/0 group-hover:border-blue-400/30 transition-colors" />
+            </button>
+          )}
+        </div>
       </nav>
 
-      {/* Account Modal */}
+      {/* Account Modal (Premium Glassmorphic) */}
       <AnimatePresence>
         {showAccount && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-[100] p-4">
-            <motion.div initial={{ scale: 0.95, opacity: 0, y: 20 }} animate={{ scale: 1, opacity: 1, y: 0 }} exit={{ scale: 0.95, opacity: 0, y: 20 }}
-              className={`rounded-[2rem] p-8 w-full max-w-md shadow-2xl border relative overflow-hidden ${isBlue ? 'bg-[#112240] border-blue-500/20' : 'bg-[#fff8ef] border-[#f1d9e2]'}`}>
-              <div className={`absolute -top-20 -right-20 w-40 h-40 rounded-full blur-2xl ${isBlue ? 'bg-blue-500/10' : 'bg-[#ffd6e8]/60'}`}></div>
-              <div className={`absolute -bottom-20 -left-20 w-40 h-40 rounded-full blur-2xl ${isBlue ? 'bg-cyan-500/10' : 'bg-[#ffe8f1]/70'}`}></div>
+          <motion.div 
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/60 backdrop-blur-md flex items-center justify-center z-[100] p-4"
+          >
+            <motion.div 
+              initial={{ scale: 0.95, opacity: 0, y: 20 }} animate={{ scale: 1, opacity: 1, y: 0 }} exit={{ scale: 0.95, opacity: 0, y: 20 }}
+              className="rounded-[2.5rem] p-10 w-full max-w-md shadow-[0_40px_100px_rgba(0,0,0,0.8)] border border-white/10 bg-[#050505] relative overflow-hidden"
+            >
+              {/* Internal ambient glow */}
+              <div className="absolute -top-32 -right-32 w-64 h-64 rounded-full blur-[100px] bg-blue-600/20" />
+              <div className="absolute -bottom-32 -left-32 w-64 h-64 rounded-full blur-[100px] bg-sky-600/10" />
 
               <div className="relative z-10">
-                  <div className="text-center mb-8">
-                  <div className={`w-16 h-16 rounded-2xl mx-auto flex items-center justify-center mb-4 shadow-lg ${isBlue ? 'bg-gradient-to-tr from-blue-500 to-cyan-500' : 'bg-gradient-to-tr from-pink-400 to-rose-400'}`}>
-                    <User className="w-8 h-8 text-white" />
+                <div className="text-center mb-10">
+                  <div className="w-16 h-16 rounded-2xl mx-auto flex items-center justify-center mb-6 shadow-[0_0_30px_rgba(59,130,246,0.3)] bg-blue-500/10 border border-blue-500/30">
+                    <User className="w-8 h-8 text-blue-400" />
                   </div>
-                  <h2 className={`text-3xl font-extrabold tracking-tight ${isBlue ? 'text-white' : 'text-gray-800'}`}>
+                  <h2 className="text-3xl font-medium tracking-tighter text-white">
                     {signup ? t('auth.join') : t('auth.welcome')}
                   </h2>
-                  <p className={`font-medium mt-2 text-sm ${isBlue ? 'text-gray-400' : 'text-gray-500'}`}>
+                  <p className="font-light mt-3 text-sm text-white/50 tracking-wide">
                     {signup ? t('auth.signup_desc') : t('auth.login_desc')}
                   </p>
                 </div>
 
-                <div className="space-y-4">
+                <div className="space-y-5">
                   {signup && (
                     <div>
-                      <label className={`block text-xs font-bold uppercase tracking-wide mb-1 ml-1 ${isBlue ? 'text-gray-400' : 'text-gray-500'}`}>{t('auth.full_name')}</label>
-                      <input placeholder="John Doe" value={name} onChange={e => setName(e.target.value)}
-                        className={`w-full border rounded-2xl px-5 py-3.5 font-medium focus:outline-none transition-all ${isBlue ? 'bg-[#0a192f] border-blue-500/30 text-white placeholder-gray-500 focus:border-blue-400' : 'bg-white border-[#efc7d6] focus:border-[#db2777]'}`} />
+                      <label className="block text-[10px] font-bold uppercase tracking-widest mb-2 ml-1 text-white/40">{t('auth.full_name')}</label>
+                      <input 
+                        placeholder="John Doe" value={name} onChange={e => setName(e.target.value)}
+                        className="w-full border rounded-2xl px-5 py-4 font-medium focus:outline-none transition-all bg-white/[0.03] border-white/10 text-white placeholder-white/20 focus:border-blue-500/50 focus:bg-white/[0.05]" 
+                      />
                     </div>
                   )}
                   <div>
-                    <label className={`block text-xs font-bold uppercase tracking-wide mb-1 ml-1 ${isBlue ? 'text-gray-400' : 'text-gray-500'}`}>{t('auth.email')}</label>
-                    <input type="email" placeholder="you@example.com" value={email} onChange={e => setEmail(e.target.value)}
-                      className={`w-full border rounded-2xl px-5 py-3.5 font-medium focus:outline-none transition-all ${isBlue ? 'bg-[#0a192f] border-blue-500/30 text-white placeholder-gray-500 focus:border-blue-400' : 'bg-white border-[#efc7d6] focus:border-[#db2777]'}`} />
+                    <label className="block text-[10px] font-bold uppercase tracking-widest mb-2 ml-1 text-white/40">{t('auth.email')}</label>
+                    <input 
+                      type="email" placeholder="you@example.com" value={email} onChange={e => setEmail(e.target.value)}
+                      className="w-full border rounded-2xl px-5 py-4 font-medium focus:outline-none transition-all bg-white/[0.03] border-white/10 text-white placeholder-white/20 focus:border-blue-500/50 focus:bg-white/[0.05]" 
+                    />
                   </div>
                   <div>
-                    <label className={`block text-xs font-bold uppercase tracking-wide mb-1 ml-1 ${isBlue ? 'text-gray-400' : 'text-gray-500'}`}>{t('auth.password')}</label>
-                    <input type="password" placeholder="••••••••" value={password} onChange={e => setPassword(e.target.value)}
-                      className={`w-full border rounded-2xl px-5 py-3.5 font-medium focus:outline-none transition-all ${isBlue ? 'bg-[#0a192f] border-blue-500/30 text-white placeholder-gray-500 focus:border-blue-400' : 'bg-white border-[#efc7d6] focus:border-[#db2777]'}`} />
+                    <label className="block text-[10px] font-bold uppercase tracking-widest mb-2 ml-1 text-white/40">{t('auth.password')}</label>
+                    <input 
+                      type="password" placeholder="••••••••" value={password} onChange={e => setPassword(e.target.value)}
+                      className="w-full border rounded-2xl px-5 py-4 font-medium focus:outline-none transition-all bg-white/[0.03] border-white/10 text-white placeholder-white/20 focus:border-blue-500/50 focus:bg-white/[0.05]" 
+                    />
                   </div>
-                  <button onClick={handleSubmit} disabled={loading}
-                    className={`w-full py-4 mt-2 rounded-2xl text-white font-bold text-lg shadow-lg hover:-translate-y-0.5 transition-all active:scale-95 disabled:opacity-70 ${isBlue ? 'bg-gradient-to-r from-blue-500 to-cyan-500' : 'bg-gradient-to-r from-[#db2777] to-[#be185d]'}`}>
+                  <button 
+                    onClick={handleSubmit} disabled={loading}
+                    className="w-full py-4 mt-4 rounded-2xl text-white font-bold text-sm tracking-[0.2em] uppercase shadow-[0_0_30px_rgba(59,130,246,0.3)] hover:shadow-[0_0_50px_rgba(59,130,246,0.5)] hover:-translate-y-0.5 transition-all active:scale-95 disabled:opacity-70 bg-gradient-to-r from-blue-600 to-blue-500"
+                  >
                     {loading ? t('auth.processing') || 'Processing...' : signup ? t('auth.signup_btn') : t('auth.login_btn')}
                   </button>
                 </div>
 
-                <div className="mt-8 pt-6 border-t border-gray-200/20 text-center">
-                  <p className={`text-sm font-medium ${isBlue ? 'text-gray-400' : 'text-gray-500'}`}>
+                <div className="mt-8 pt-8 border-t border-white/5 text-center">
+                  <p className="text-xs font-medium text-white/40 uppercase tracking-widest">
                     {signup ? t('auth.has_account') : t('auth.no_account')}
-                    <button onClick={() => setSignup(!signup)}
-                      className={`ml-2 font-bold transition-colors px-3 py-1.5 rounded-lg ${isBlue ? 'text-blue-400 bg-blue-500/10 hover:bg-blue-500/20' : 'text-[#bf5f7e] bg-[#fff1f7] hover:bg-[#ffe8f1]'}`}>
+                    <button 
+                      onClick={() => setSignup(!signup)}
+                      className="ml-3 font-bold transition-colors text-blue-400 hover:text-blue-300"
+                    >
                       {signup ? t('auth.switch_login') : t('auth.switch_signup')}
                     </button>
                   </p>
                 </div>
 
-                <button onClick={() => setShowAccount(false)}
-                  className={`absolute top-6 right-6 p-2 rounded-full transition-colors active:scale-95 ${isBlue ? 'bg-blue-900/50 hover:bg-blue-800/50 text-gray-400' : 'bg-gray-100 hover:bg-gray-200 text-gray-500'}`}>
+                <button 
+                  onClick={() => setShowAccount(false)}
+                  className="absolute top-6 right-6 p-2 rounded-full transition-colors bg-white/5 hover:bg-white/10 text-white/50 hover:text-white"
+                >
                   <X className="w-5 h-5" />
                 </button>
               </div>

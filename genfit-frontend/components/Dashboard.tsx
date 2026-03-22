@@ -1,21 +1,23 @@
-import React, { useState, useEffect } from 'react';
-import {
-  AreaChart,
-  Area,
-  XAxis,
-  YAxis,
-  Tooltip,
-  ResponsiveContainer,
-  PieChart,
-  Pie,
-  Cell,
-  BarChart,
-  Bar,
-  CartesianGrid
-} from 'recharts';
+import React, { useState } from 'react';
+import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
 import { DailyStats, ActivityData, NutritionData, Theme } from '../types';
-import { Flame, Footprints, Moon, Activity, Edit, Sparkles, Zap, Droplets, Trophy } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import {
+  Zap, Moon, Utensils, Footprints, Play, Sparkles, Dumbbell, Activity
+} from 'lucide-react';
+import { motion, AnimatePresence, Variants } from 'framer-motion';
+
+const containerVariants: Variants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.1, delayChildren: 0.3 }
+  }
+};
+
+const itemVariants: Variants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] } }
+};
 
 interface DashboardProps {
   stats: DailyStats;
@@ -24,352 +26,284 @@ interface DashboardProps {
   theme: Theme;
 }
 
-const Dashboard: React.FC<DashboardProps> = ({ stats, activities, nutrition, theme }) => {
-  const isBlue = theme === 'blue';
-  const isPink = theme === 'pink';
+function getGreeting() {
+  const hour = new Date().getHours();
+  if (hour < 12) return 'Good morning';
+  if (hour < 17) return 'Good afternoon';
+  return 'Good evening';
+}
 
-  // Theme-aware colors
-  const colors = {
-    bgGradient: isBlue 
-      ? 'from-[#f3f7ff] via-[#edf3ff] to-[#e7efff]' 
-      : 'from-[#fff3f8] via-[#fff7fb] to-[#fdf2f8]',
-    cardBg: isBlue ? 'bg-white/75 backdrop-blur-xl' : 'bg-white/80 backdrop-blur-xl',
-    cardBorder: isBlue ? 'border-[#dbe6ff]' : 'border-[#f4dce8]',
-    textMain: isBlue ? 'text-slate-800' : 'text-slate-800',
-    textSub: isBlue ? 'text-slate-500' : 'text-slate-500',
-    textAccent: isBlue ? 'text-[#4f67d7]' : 'text-[#c7568a]',
-    accentPrimary: isBlue ? '#60a5fa' : '#ec4899',
-    accentSecondary: isBlue ? '#818cf8' : '#f472b6',
-    accentTertiary: isBlue ? '#38bdf8' : '#fb7185',
-    progressBarBg: isBlue ? '#e6edff' : '#fbe4ef',
-    iconAccent: isBlue ? 'text-[#5b74de]' : 'text-[#d9468f]',
-    buttonBg: isBlue ? 'bg-[#5b74de]' : 'bg-[#d9468f]',
-    buttonHover: isBlue ? 'hover:bg-[#4f67d7]' : 'hover:bg-[#be3e7d]',
-    tagBg: isBlue ? 'bg-[#f5f8ff]' : 'bg-[#fff2f8]',
-    tagBorder: isBlue ? 'border-[#dbe6ff]' : 'border-[#f4dce8]',
-    chartGrid: isBlue ? '#dbe6ff' : '#f3dce7',
-    tooltipBg: '#ffffff',
-    tooltipBorder: isBlue ? '#dbe6ff' : '#f4dce8',
-  };
+const AI_INSIGHTS = [
+  "You're 84% more likely to stay consistent when you sleep before midnight. Tonight, try resting 30 min earlier.",
+  "Your physical activity is trending upward this week. You are on track to exceed your goals.",
+  "Your protein intake has been slightly below optimal. Consider a protein-rich snack post-workout.",
+  "Rest and recovery are just as important as the workout. Your body responds best to balanced cycles.",
+  "You've hit your daily targets 4 days in a row. Small, consistent steps build lasting habits."
+];
 
-  const [goals, setGoals] = useState(() => {
-    const saved = localStorage.getItem('fitnessGoals');
-    return saved
-      ? JSON.parse(saved)
-      : { steps: 10000, calories: 800, sleep: 8, heart: 80 };
-  });
+const CircleRing: React.FC<{ pct: number; size?: number; strokeWidth?: number; color?: string; bgStroke?: string; lineCap?: 'round' | 'square'; dropShadow?: string }> = ({
+  pct, size = 64, strokeWidth = 5, color = '#3b82f6', bgStroke = 'rgba(255,255,255,0.05)', lineCap = 'round', dropShadow
+}) => {
+  const r = (size - strokeWidth) / 2;
+  const circ = 2 * Math.PI * r;
+  const dash = (Math.min(pct, 100) / 100) * circ;
+  return (
+    <svg width={size} height={size} style={{ transform: 'rotate(-90deg)', filter: dropShadow }}>
+      <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke={bgStroke} strokeWidth={strokeWidth} />
+      <circle
+        cx={size / 2} cy={size / 2} r={r} fill="none"
+        stroke={color} strokeWidth={strokeWidth}
+        strokeDasharray={`${dash} ${circ - dash}`}
+        strokeLinecap={lineCap}
+        style={{ transition: 'stroke-dasharray 1s cubic-bezier(0.16, 1, 0.3, 1)' }}
+      />
+    </svg>
+  );
+};
 
-  const [editing, setEditing] = useState(false);
+/* ─── Premium Deep Navy Metric Card ───────────────────────────────────────────────── */
+interface MetricProps {
+  label: string;
+  value: string;
+  unit: string;
+  pct: number;
+  Icon: any;
+  shadowColor: string;
+  baseColor: string;
+  ringColor: string;
+}
 
-  useEffect(() => {
-    localStorage.setItem('fitnessGoals', JSON.stringify(goals));
-  }, [goals]);
+const PremiumMetricCard: React.FC<MetricProps> = ({ label, value, unit, pct, Icon, shadowColor, baseColor, ringColor }) => (
+  <motion.div
+    variants={itemVariants}
+    whileHover={{ y: -4, transition: { duration: 0.2 } }}
+    className="group relative p-7 rounded-[2rem] border border-white/5 bg-[#030303] hover:bg-[#050505] transition-all duration-500 overflow-hidden shadow-2xl flex flex-col justify-between"
+  >
+    {/* Hover Glow */}
+    <div className={`absolute -inset-0.5 bg-gradient-to-br ${baseColor} opacity-0 group-hover:opacity-10 transition-opacity duration-700 blur-2xl`} />
 
-  const weightData = [
-    { day: 'Mon', weight: 70.2 }, { day: 'Tue', weight: 70.1 },
-    { day: 'Wed', weight: 69.9 }, { day: 'Thu', weight: 69.8 },
-    { day: 'Fri', weight: 69.6 }, { day: 'Sat', weight: 69.5 },
-    { day: 'Sun', weight: 69.3 },
-  ];
+    <div className="relative z-10 flex items-center justify-between mb-6">
+      <div className="flex items-center gap-3">
+        <div className={`p-2.5 rounded-xl bg-white/[0.03] border border-white/5 shadow-[0_0_15px_${shadowColor}] group-hover:scale-110 transition-transform duration-500`}>
+          <Icon size={18} className="text-white" />
+        </div>
+        <p className="font-medium text-sm text-white/50 tracking-wide uppercase">{label}</p>
+      </div>
+      <p className="text-sm font-bold text-white/40">{Math.round(pct)}%</p>
+    </div>
+    
+    <div className="relative z-10 flex items-end justify-between">
+      <div>
+        <span className="text-4xl font-bold tracking-tighter text-white">{value}</span>
+        <span className="ml-1.5 flex-1 text-sm font-medium text-white/50">{unit}</span>
+      </div>
+      
+      {/* Clean elegant mini progress ring */}
+      <div className="relative flex items-center justify-center w-10 h-10">
+         <CircleRing pct={pct} size={40} strokeWidth={4} color={ringColor} bgStroke="rgba(255,255,255,0.05)" dropShadow={`drop-shadow(0 0 8px ${ringColor}80)`} />
+      </div>
+    </div>
+    
+  </motion.div>
+);
 
+const Dashboard: React.FC<DashboardProps> = ({ stats, activities, nutrition }) => {
   const today = new Date().toDateString();
   const todayActivities = activities.filter(a => new Date(a.timestamp).toDateString() === today);
-  const totalDuration = todayActivities.reduce((sum, item) => sum + item.durationMinutes, 0);
-  const totalBurn = todayActivities.reduce((sum, item) => sum + item.caloriesBurned, 0);
+  const totalBurn = todayActivities.reduce((s, a) => s + a.caloriesBurned, 0);
+  const todayCalories = nutrition.filter(n => new Date(n.timestamp ?? Date.now()).toDateString() === today)
+    .reduce((s, n) => s + n.calories, 0);
 
-  const recentActivities = [...activities]
-    .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
-    .slice(0, 4);
+  const recentActivities = [...activities].sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()).slice(0, 5);
 
-  const burnByDay = Array.from({ length: 7 }).map((_, index) => {
-    const date = new Date();
-    date.setDate(date.getDate() - (6 - index));
-    const dayKey = date.toDateString();
+  const weekData = Array.from({ length: 7 }).map((_, i) => {
+    const d = new Date(); d.setDate(d.getDate() - (6 - i)); const key = d.toDateString();
     return {
-      day: date.toLocaleDateString('en-US', { weekday: 'short' }),
-      burn: activities
-        .filter(item => new Date(item.timestamp).toDateString() === dayKey)
-        .reduce((sum, item) => sum + item.caloriesBurned, 0)
+      day: d.toLocaleDateString('en-US', { weekday: 'short' }),
+      burn: activities.filter(a => new Date(a.timestamp).toDateString() === key).reduce((s, a) => s + a.caloriesBurned, 0),
     };
   });
 
-  const totalProtein = nutrition.reduce((sum, item) => sum + item.protein, 0);
-  const totalCarbs = nutrition.reduce((sum, item) => sum + item.carbs, 0);
-  const totalFats = nutrition.reduce((sum, item) => sum + item.fats, 0);
-  const totalMacros = totalProtein + totalCarbs + totalFats;
+  const stepsScore = Math.min((stats.steps / stats.stepsGoal) * 100, 100);
+  const sleepScore = Math.min((stats.sleepHours / 8) * 100, 100);
+  const calScore = Math.min((todayCalories / stats.calorieGoal) * 100, 100);
+  const todayScore = Math.round((stepsScore + sleepScore + calScore) / 3);
 
-  const macroData = [
-    { name: 'Protein', value: totalMacros > 0 ? Math.round((totalProtein / totalMacros) * 100) : 30 },
-    { name: 'Carbs', value: totalMacros > 0 ? Math.round((totalCarbs / totalMacros) * 100) : 50 },
-    { name: 'Fats', value: totalMacros > 0 ? Math.round((totalFats / totalMacros) * 100) : 20 },
-  ];
-
-  const COLORS = [colors.accentPrimary, colors.accentSecondary, colors.accentTertiary];
-
-  const StatCard = ({ title, value, unit, goal, icon: Icon, color }: any) => {
-    const safeGoal = goal > 0 ? goal : 1;
-    const percent = Math.min((value / safeGoal) * 100, 100);
-    return (
-      <motion.div
-        whileHover={{ y: -4 }}
-        className={`${colors.cardBg} p-6 rounded-3xl shadow-sm border ${colors.cardBorder} relative overflow-hidden`}
-      >
-        <div className="absolute top-0 right-0 p-4 opacity-[0.09] text-slate-400">
-          <Icon size={58} />
-        </div>
-        <div className="relative z-10">
-          <p className={`text-xs font-semibold uppercase tracking-wide ${colors.textAccent} mb-1`}>{title}</p>
-          <div className="flex items-baseline gap-2 mb-3">
-            <h3 className={`text-3xl font-bold ${colors.textMain}`}>{value}</h3>
-            <span className={`text-xs font-semibold ${colors.textSub} uppercase`}>{unit}</span>
-          </div>
-          <div className={`h-2 w-full ${colors.progressBarBg} rounded-full overflow-hidden`}>
-            <motion.div 
-              initial={{ width: 0 }}
-              animate={{ width: `${percent}%` }}
-              className="h-full"
-              style={{ backgroundColor: color || colors.accentPrimary }}
-            />
-          </div>
-          <p className={`text-[11px] font-medium ${colors.textSub} mt-2`}>Goal: {goal} {unit}</p>
-        </div>
-      </motion.div>
-    );
-  };
+  const [insightIdx] = useState(() => Math.floor(Math.random() * AI_INSIGHTS.length));
+  const insight = AI_INSIGHTS[insightIdx];
 
   return (
-    <div className={`w-full min-h-screen px-4 md:px-8 lg:px-10 py-8 bg-gradient-to-b ${colors.bgGradient} ${colors.textMain}`}>
-      {/* Header */}
-      <motion.div 
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-7"
-      >
-        <div>
-          <div className="flex items-center gap-2 mb-1">
-            <Sparkles className={colors.iconAccent} size={18} />
-            <span className={`text-xs font-semibold uppercase tracking-wide ${colors.textAccent}`}>Daily Overview</span>
+    <div className="w-full min-h-screen bg-[#010101] text-white px-4 md:px-8 lg:px-12 py-8 md:py-12 overflow-x-hidden selection:bg-blue-500/30">
+      
+      {/* Ambient Dashboard Background Glow */}
+      <div className="fixed top-[-20%] right-[-10%] w-[50vw] h-[50vw] bg-blue-600/10 blur-[150px] rounded-full pointer-events-none" />
+
+      <div className="relative w-full max-w-[1400px] mx-auto flex flex-col gap-8 md:gap-10">
+        
+        {/* HERO SECTION */}
+        <section className="flex flex-col xl:flex-row xl:items-end justify-between gap-8 mb-4 relative z-10">
+          <div className="flex-1">
+            <motion.div 
+              initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}
+              className="inline-flex items-center gap-3 px-4 py-1.5 rounded-full mb-6 border border-cyan-500/30 bg-cyan-500/10 shadow-[0_0_20px_rgba(6,182,212,0.2)]"
+            >
+              <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_10px_#22d3ee]" />
+              <span className="text-[10px] font-bold tracking-[0.2em] text-cyan-300 uppercase">Live Sync Active</span>
+            </motion.div>
+            
+            <motion.h1 
+              initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.1 }}
+              className="text-5xl md:text-6xl lg:text-[70px] font-medium tracking-tighter mb-4 text-white drop-shadow-xl"
+            >
+              {getGreeting()}, <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-sky-500">Abhay</span>
+            </motion.h1>
+            <motion.p 
+              initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1, delay: 0.3 }}
+              className="text-lg font-light max-w-2xl text-white/50 tracking-wide"
+            >
+              Neural synchronization complete. Here's your master dashboard overview.
+            </motion.p>
           </div>
-          <h2 className={`text-3xl md:text-5xl font-bold tracking-tight ${colors.textMain}`}>Your Fitness Dashboard</h2>
-          <p className={`text-sm ${colors.textSub} mt-1`}>Track goals, progress trends, and recent performance in one place.</p>
-        </div>
-        <button
-          onClick={() => setEditing(true)}
-          className={`p-4 rounded-2xl ${colors.cardBg} border ${colors.cardBorder} ${isPink ? 'hover:bg-[#fff0f7]' : 'hover:bg-[#eef3ff]'} transition-all shadow-sm`}
-        >
-          <Edit size={20} className={colors.textAccent} />
-        </button>
-      </motion.div>
+          
+          {/* AI Insight Pill */}
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.8, delay: 0.4 }}
+            className="w-full xl:w-[450px] p-6 rounded-3xl border border-white/10 bg-[#050505]/80 backdrop-blur-xl flex gap-5 items-start shadow-2xl group"
+          >
+            <div className="p-3 rounded-2xl flex-shrink-0 bg-blue-500/10 text-blue-400 border border-blue-500/20 shadow-[0_0_15px_rgba(59,130,246,0.15)] group-hover:scale-110 transition-transform duration-500">
+              <Sparkles size={24} />
+            </div>
+            <div>
+              <p className="text-[10px] font-bold uppercase tracking-[0.2em] mb-2 text-white/40">Smart Insight</p>
+              <p className="text-sm leading-relaxed font-light text-white/80">{insight}</p>
+            </div>
+          </motion.div>
+        </section>
 
-      {/* Highlight Strip */}
-      <motion.div
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.02 }}
-        className={`mb-7 ${colors.cardBg} border ${colors.cardBorder} rounded-3xl p-5 md:p-6 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-sm`}
-      >
-        <div>
-          <p className={`text-sm ${colors.textAccent} font-semibold`}>Today at a glance</p>
-          <h3 className={`text-2xl font-bold mt-1 ${colors.textMain}`}>{totalDuration} min activity • {totalBurn} kcal burned</h3>
-        </div>
-        <div className="flex items-center gap-3 text-sm">
-          <span className={`px-3 py-1.5 rounded-lg ${colors.tagBg} border ${colors.tagBorder} ${colors.textAccent} font-semibold`}>{todayActivities.length} sessions</span>
-          <span className={`px-3 py-1.5 rounded-lg ${colors.cardBg} border ${colors.tagBorder} ${colors.textSub} font-semibold`}>Water: {stats.waterMl} ml</span>
-        </div>
-      </motion.div>
-
-      {/* Main Grid */}
-      <div className="grid grid-cols-1 xl:grid-cols-12 gap-6">
-        {/* Core Metrics */}
-        <div className="xl:col-span-12 grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
-          <StatCard title="Steps" value={stats.steps} unit="steps" goal={goals.steps} icon={Footprints} color={colors.accentPrimary} />
-          <StatCard title="Calories Out" value={stats.caloriesOut} unit="kcal" goal={goals.calories} icon={Flame} color={isPink ? '#f43f5e' : '#3b82f6'} />
-          <StatCard title="Sleep" value={stats.sleepHours} unit="hrs" goal={goals.sleep} icon={Moon} color={isPink ? '#ec4899' : '#8b5cf6'} />
-          <StatCard title="Hydration" value={stats.waterMl} unit="ml" goal={stats.waterTarget} icon={Droplets} color={isPink ? '#e11d48' : '#0ea5e9'} />
-        </div>
-
-        {/* Left Section */}
-        <div className="xl:col-span-8 space-y-6">
-          <div className={`${colors.cardBg} p-5 md:p-6 rounded-3xl shadow-sm border ${colors.cardBorder}`}>
-            <div className="flex flex-col md:flex-row md:items-center justify-between mb-5 gap-3">
-              <h3 className={`text-xl font-bold ${colors.textMain}`}>Weight Trend</h3>
-              <div className={`flex gap-2 text-xs font-semibold p-1 ${colors.tagBg} rounded-lg border ${colors.tagBorder}`}>
-                <button className={`px-3 py-1 rounded-md ${colors.cardBg} ${colors.textMain}`}>Weight</button>
-                <button className={`px-3 py-1 rounded-md ${colors.textAccent}`}>BMI</button>
+        {/* METRICS ROW */}
+        <motion.section variants={containerVariants} initial="hidden" animate="visible" className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 relative z-10">
+          {/* Overall Health Score */}
+          <motion.div
+            variants={itemVariants}
+            whileHover={{ y: -4, transition: { duration: 0.2 } }}
+            className="group p-7 rounded-[2rem] border border-white/5 bg-gradient-to-br from-[#050505] to-[#020202] flex flex-col justify-center items-center relative overflow-hidden shadow-2xl"
+          >
+            <div className="absolute inset-0 bg-blue-500/10 blur-[50px] rounded-full opacity-50 group-hover:opacity-100 transition-opacity duration-700" />
+            
+            <p className="text-xs font-bold uppercase tracking-[0.2em] mb-6 text-white/50 relative z-10">System Health</p>
+            
+            <div className="relative mb-5 z-10">
+              <CircleRing pct={todayScore} size={130} strokeWidth={8} color="#3b82f6" dropShadow="drop-shadow(0 0 15px rgba(59,130,246,0.5))" />
+              <div className="absolute inset-0 flex flex-col items-center justify-center">
+                <span className="text-4xl font-bold tracking-tighter text-white">{todayScore}</span>
               </div>
             </div>
-            <div className="h-72">
+            
+            <div className="px-4 py-1.5 rounded-full text-[10px] font-bold tracking-[0.1em] uppercase bg-white/5 border border-white/10 text-white/70 relative z-10 group-hover:border-blue-500/30 group-hover:bg-blue-500/10 transition-colors">
+              {todayScore >= 80 ? 'Optimal' : todayScore >= 60 ? 'Stable' : 'Critical'}
+            </div>
+          </motion.div>
+
+          <PremiumMetricCard
+            label="Activity" value={stats.steps.toLocaleString()} unit="steps" pct={stepsScore} Icon={Footprints}
+            baseColor="from-blue-500/0 via-blue-500/10 to-transparent" shadowColor="rgba(59,130,246,0.5)" ringColor="#3b82f6"
+          />
+          <PremiumMetricCard
+            label="Sleep" value={`${stats.sleepHours}`} unit="hrs" pct={sleepScore} Icon={Moon}
+            baseColor="from-sky-500/0 via-sky-500/10 to-transparent" shadowColor="rgba(14,165,233,0.5)" ringColor="#0ea5e9"
+          />
+          <PremiumMetricCard
+            label="Nutrition" value={`${todayCalories}`} unit="kcal" pct={calScore} Icon={Utensils}
+            baseColor="from-cyan-500/0 via-cyan-500/10 to-transparent" shadowColor="rgba(6,182,212,0.5)" ringColor="#22d3ee"
+          />
+        </motion.section>
+
+        {/* QUICK ACTIONS */}
+        <motion.section variants={containerVariants} initial="hidden" animate="visible" className="grid grid-cols-2 md:grid-cols-4 gap-4 relative z-10">
+          {[
+            { label: 'Log Workout', Icon: Play, hoverBase: 'hover:border-blue-500/50 hover:bg-blue-500/10 hover:shadow-[0_0_20px_rgba(59,130,246,0.2)] text-blue-400' },
+            { label: 'Add Meal', Icon: Utensils, hoverBase: 'hover:border-emerald-500/50 hover:bg-emerald-500/10 hover:shadow-[0_0_20px_rgba(16,185,129,0.2)] text-emerald-400' },
+            { label: 'Add Water', Icon: Zap, hoverBase: 'hover:border-cyan-500/50 hover:bg-cyan-500/10 hover:shadow-[0_0_20px_rgba(6,182,212,0.2)] text-cyan-400' },
+            { label: 'Log Sleep', Icon: Moon, hoverBase: 'hover:border-sky-500/50 hover:bg-sky-500/10 hover:shadow-[0_0_20px_rgba(14,165,233,0.2)] text-sky-400' },
+          ].map((action, i) => (
+            <motion.button
+              key={i} variants={itemVariants} whileHover={{ y: -2, scale: 1.02 }} whileTap={{ scale: 0.98 }}
+              className={`p-5 rounded-2xl border border-white/5 bg-[#030303] flex items-center justify-center gap-3 transition-colors duration-300 font-bold text-xs tracking-widest uppercase text-white/70 ${action.hoverBase} group`}
+            >
+              <action.Icon size={18} className="transition-transform group-hover:scale-110" />
+              <span>{action.label}</span>
+            </motion.button>
+          ))}
+        </motion.section>
+
+        {/* CHARTS & LOGS */}
+        <motion.div variants={containerVariants} initial="hidden" animate="visible" className="grid grid-cols-1 lg:grid-cols-3 gap-6 relative z-10">
+          <motion.div variants={itemVariants} className="lg:col-span-2 p-8 rounded-[2rem] border border-white/5 bg-[#030303] shadow-2xl">
+            <div className="flex items-center justify-between mb-10">
+              <h3 className="text-xl font-medium tracking-tight text-white">Activity Output</h3>
+              <select className="text-xs font-bold tracking-widest uppercase bg-white/5 border border-white/10 rounded-lg px-3 py-1.5 outline-none cursor-pointer text-white/70 hover:text-white transition-colors">
+                <option className="bg-[#050505]">This Week</option>
+                <option className="bg-[#050505]">Last Week</option>
+              </select>
+            </div>
+            <div className="h-[300px] w-full">
               <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={weightData}>
+                <AreaChart data={weekData} margin={{ top: 5, right: 10, left: -20, bottom: 0 }}>
                   <defs>
-                    <linearGradient id="colorWeight" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor={colors.accentPrimary} stopOpacity={0.28}/>
-                      <stop offset="95%" stopColor={colors.accentPrimary} stopOpacity={0}/>
+                    <linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#3b82f6" stopOpacity={0.6} />
+                      <stop offset="100%" stopColor="#3b82f6" stopOpacity={0} />
                     </linearGradient>
                   </defs>
-                  <CartesianGrid strokeDasharray="4 4" stroke={colors.chartGrid} vertical={false} />
-                  <Tooltip 
-                    contentStyle={{ 
-                        borderRadius: '12px', 
-                        border: `1px solid ${colors.tooltipBorder}`, 
-                        boxShadow: '0 6px 16px rgba(0,0,0,0.08)',
-                        backgroundColor: colors.tooltipBg,
-                        color: colors.textMain
-                    }} 
-                    itemStyle={{ color: colors.textMain }}
+                  <CartesianGrid strokeDasharray="4 4" vertical={false} stroke="rgba(255,255,255,0.05)" />
+                  <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#64748b', fontWeight: 'bold' }} dy={15} />
+                  <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#64748b', fontWeight: 'bold' }} dx={-10} />
+                  <Tooltip
+                    contentStyle={{ borderRadius: '16px', border: '1px solid rgba(255,255,255,0.1)', background: 'rgba(5,5,5,0.9)', backdropFilter: 'blur(10px)', boxShadow: '0 20px 40px rgba(0, 0, 0, 0.8)' }}
+                    itemStyle={{ color: '#60a5fa', fontWeight: 600 }}
                   />
-                  <Area type="monotone" dataKey="weight" stroke={colors.accentPrimary} strokeWidth={3.5} fillOpacity={1} fill="url(#colorWeight)" />
-                  <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{fontSize: 11, fontWeight: 600, fill: isPink ? '#b0728f' : '#6f86d9'}} />
-                  <YAxis axisLine={false} tickLine={false} tick={{fontSize: 11, fill: isPink ? '#b0728f' : '#6f86d9'}} />
+                  <Area type="monotone" dataKey="burn" stroke="#3b82f6" strokeWidth={4} fill="url(#chartGrad)" activeDot={{ r: 6, strokeWidth: 0, fill: '#93c5fd', className: 'drop-shadow-[0_0_10px_rgba(59,130,246,0.8)]' }} />
                 </AreaChart>
               </ResponsiveContainer>
             </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className={`${colors.cardBg} p-5 md:p-6 rounded-3xl shadow-sm border ${colors.cardBorder}`}>
-               <h3 className={`text-lg font-bold mb-5 ${colors.textMain}`}>Macro Split</h3>
-               <div className="h-60">
-                 <ResponsiveContainer width="100%" height="100%">
-                   <PieChart>
-                     <Pie data={macroData} innerRadius={58} outerRadius={82} paddingAngle={5} dataKey="value">
-                       {macroData.map((entry, index) => (
-                         <Cell key={`cell-${index}`} fill={COLORS[index]} />
-                       ))}
-                     </Pie>
-                   </PieChart>
-                 </ResponsiveContainer>
-               </div>
-               <div className="flex justify-around mt-3">
-                  {macroData.map((m, i) => (
-                    <div key={i} className="text-center">
-                       <p className={`text-sm font-bold ${colors.textAccent}`}>{m.value}%</p>
-                       <p className={`text-[11px] font-semibold ${colors.textSub} uppercase`}>{m.name}</p>
-                    </div>
-                  ))}
-               </div>
-            </div>
-
-            <div className={`${colors.cardBg} ${colors.textMain} p-5 md:p-6 rounded-3xl shadow-sm border ${colors.cardBorder} relative overflow-hidden`}>
-              <div className="absolute top-0 right-0 p-8 opacity-15 text-slate-400">
-                  <Trophy size={80} />
-               </div>
-              <p className={`text-xs font-semibold uppercase tracking-wider ${colors.textAccent} mb-2`}>Milestone Progress</p>
-               <h3 className={`text-2xl md:text-3xl font-bold mb-4 ${colors.textMain}`}>Unstoppable Streak</h3>
-              <p className={`text-sm leading-relaxed ${colors.textSub} mb-6 max-w-xs`}>
-                 You are building a strong routine. Keep consistency this week to unlock a fresh performance badge.
-               </p>
-              <button className={`${colors.buttonBg} text-white px-6 py-3 rounded-xl font-bold text-sm ${colors.buttonHover} transition-all`}>
-                 Claim Reward
-              </button>
-            </div>
-          </div>
-
-          <div className={`${colors.cardBg} p-5 md:p-6 rounded-3xl shadow-sm border ${colors.cardBorder}`}>
-            <h3 className={`text-xl font-bold mb-5 ${colors.textMain}`}>Weekly Burn Trend</h3>
-            <div className="h-64">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={burnByDay}>
-                  <CartesianGrid strokeDasharray="4 4" stroke={colors.chartGrid} vertical={false} />
-                  <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{fontSize: 11, fontWeight: 600, fill: isPink ? '#b0728f' : '#6f86d9'}} />
-                  <YAxis axisLine={false} tickLine={false} tick={{fontSize: 11, fill: isPink ? '#b0728f' : '#6f86d9'}} />
-                  <Tooltip
-                    cursor={{ fill: isPink ? '#ffe9f3' : '#eef3ff' }}
-                    contentStyle={{
-                      borderRadius: '12px',
-                      border: `1px solid ${colors.tooltipBorder}`,
-                      backgroundColor: colors.tooltipBg,
-                      color: colors.textMain
-                    }}
-                    itemStyle={{ color: colors.textMain }}
-                  />
-                  <Bar dataKey="burn" radius={[8, 8, 0, 0]} fill={colors.accentPrimary} barSize={34} />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
-        </div>
-
-        {/* Right Rail */}
-        <div className="xl:col-span-4 space-y-6">
-           <div className={`${colors.cardBg} p-5 md:p-6 rounded-3xl shadow-sm border ${colors.cardBorder}`}>
-              <h3 className={`text-lg font-bold mb-4 ${colors.textMain}`}>Recent Activities</h3>
-              <div className="space-y-4">
-                 {recentActivities.map((a, i) => (
-                    <div key={i} className={`flex justify-between items-center p-4 ${colors.tagBg} border ${colors.tagBorder} rounded-2xl`}>
-                       <div className="flex items-center gap-3">
-                          <Activity size={16} className={colors.iconAccent} />
-                          <div>
-                            <p className={`text-sm font-semibold ${colors.textMain}`}>{a.type}</p>
-                            <p className={`text-xs ${colors.textSub}`}>{a.durationMinutes} min</p>
-                          </div>
-                       </div>
-                       <p className={`text-base font-bold ${colors.textMain}`}>{a.caloriesBurned} <span className={`text-[10px] ${colors.textSub}`}>kcal</span></p>
-                    </div>
-                 ))}
-                 {recentActivities.length === 0 && <p className={`text-center py-8 text-sm ${colors.textSub}`}>No activities logged yet.</p>}
-              </div>
-           </div>
-
-           <div className={`p-5 md:p-6 border ${colors.tagBorder} rounded-3xl ${colors.tagBg}`}>
-              <div className="flex items-center gap-3 mb-4">
-                 <Zap className={colors.iconAccent} size={20} />
-                 <p className={`text-sm font-bold uppercase tracking-wide ${colors.textAccent}`}>AI Insight</p>
-              </div>
-              <p className="text-sm leading-relaxed text-slate-700">
-                Sleep quality dropped slightly versus last week. Try a fixed bedtime for 3 days to improve recovery and workout output.
-              </p>
-           </div>
-
-           <div className={`${colors.cardBg} p-5 md:p-6 rounded-3xl shadow-sm border ${colors.cardBorder}`}>
-              <h3 className={`text-lg font-bold mb-3 ${colors.textMain}`}>Quick Goal Health</h3>
-              <div className="space-y-2 text-sm text-slate-700">
-                <p>Steps Progress: <span className="font-semibold">{Math.min(Math.round((stats.steps / goals.steps) * 100), 100)}%</span></p>
-                <p>Calories Progress: <span className="font-semibold">{Math.min(Math.round((stats.caloriesOut / goals.calories) * 100), 100)}%</span></p>
-                <p>Sleep Progress: <span className="font-semibold">{Math.min(Math.round((stats.sleepHours / goals.sleep) * 100), 100)}%</span></p>
-              </div>
-           </div>
-        </div>
-      </div>
-
-      {/* Goals Modal */}
-      <AnimatePresence>
-        {editing && (
-          <motion.div 
-            initial={{ opacity: 0 }} 
-            animate={{ opacity: 1 }} 
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/60 backdrop-blur-md flex items-center justify-center z-[100] p-4"
-          >
-            <motion.div 
-              initial={{ scale: 0.9, y: 20 }} 
-              animate={{ scale: 1, y: 0 }} 
-              className={`${colors.cardBg} p-8 rounded-3xl shadow-xl w-full max-w-md border ${colors.cardBorder}`}
-            >
-              <h3 className={`text-2xl font-bold mb-6 ${colors.textMain}`}>Edit Goals</h3>
-              <div className="space-y-5">
-                {[['Steps', 'steps'], ['Calories', 'calories'], ['Sleep', 'sleep'], ['Heart', 'heart']].map(([l, k]: any) => (
-                  <div key={k}>
-                    <p className={`text-xs font-semibold uppercase tracking-wide ${colors.textAccent} mb-2 ml-1`}>{l}</p>
-                    <input
-                      type="number"
-                      value={goals[k]}
-                      onChange={e => setGoals({ ...goals, [k]: Number(e.target.value) })}
-                      className={`w-full px-4 py-3 ${colors.cardBg} ${colors.textMain} rounded-xl font-semibold outline-none border ${colors.cardBorder} focus:ring-2 ${isPink ? 'ring-pink-200' : 'ring-indigo-200'}`}
-                    />
-                  </div>
-                ))}
-              </div>
-              <button
-                onClick={() => setEditing(false)}
-                className={`w-full py-3 mt-6 ${colors.buttonBg} text-white rounded-xl font-semibold ${colors.buttonHover} transition-all`}
-              >
-                Save Goals
-              </button>
-            </motion.div>
           </motion.div>
-        )}
-      </AnimatePresence>
+
+          {/* Recent Logs */}
+          <motion.div variants={itemVariants} className="p-8 rounded-[2rem] border border-white/5 bg-[#030303] shadow-2xl flex flex-col">
+            <h3 className="text-xl font-medium tracking-tight text-white mb-8">System Logs</h3>
+            <div className="flex-1 overflow-auto pr-2 custom-scrollbar space-y-4">
+              {recentActivities.length === 0 ? (
+                <div className="flex flex-col items-center justify-center h-full text-center py-10 opacity-50">
+                  <div className="p-4 rounded-2xl bg-white/5 border border-white/10 mb-4">
+                    <Activity size={24} className="text-white/50" />
+                  </div>
+                  <p className="text-xs font-bold tracking-widest uppercase text-white/50">No Data Synced</p>
+                </div>
+              ) : (
+                <motion.div variants={containerVariants} initial="hidden" animate="visible" className="space-y-4">
+                  {recentActivities.map((a, i) => (
+                    <motion.div key={i} variants={itemVariants} className="group flex items-center gap-4 p-4 rounded-2xl border border-white/5 bg-white/[0.02] hover:bg-white/[0.05] hover:border-white/10 transition-all">
+                      <div className="p-3 rounded-xl flex-shrink-0 bg-blue-500/10 text-blue-400 border border-blue-500/20 group-hover:scale-110 transition-transform">
+                      <Dumbbell size={18} />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-semibold text-sm text-white truncate">{a.type}</p>
+                      <p className="text-[10px] font-bold tracking-widest uppercase text-white/40 mt-1">{a.durationMinutes} minutes</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="font-bold text-lg text-blue-400">{a.caloriesBurned}</p>
+                      <p className="text-[9px] font-bold tracking-[0.2em] text-white/30">KCAL</p>
+                      </div>
+                    </motion.div>
+                  ))}
+                </motion.div>
+              )}
+            </div>
+          </motion.div>
+        </motion.div>
+
+        <div className="h-12" />
+      </div>
     </div>
   );
 };

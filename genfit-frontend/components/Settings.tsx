@@ -6,7 +6,7 @@ import {
     LogOut, Palette, User, Shield, Bell, Globe, HardDrive,
     HelpCircle, Info, Check, ChevronLeft, ChevronRight,
     Mail, Lock, Trash2, Download, ExternalLink, MessageSquare,
-    Languages, Database, UserCheck, ShieldCheck, Github, Instagram
+    Database, UserCheck, ShieldCheck, Github, Instagram, Zap, Settings as SettingsIcon, Crown
 } from 'lucide-react';
 import { logoutUser } from '../services/firebaseAuth';
 
@@ -17,15 +17,13 @@ interface SettingsProps {
     setView: (v: ViewState) => void;
 }
 
-const Settings: React.FC<SettingsProps> = ({ user, theme, setTheme, setView }) => {
+const Settings: React.FC<SettingsProps> = ({ user, setTheme, setView }) => {
     const [activeTab, setActiveTab] = useState<string | null>(null);
     const { language, setLanguage, t } = useLanguage();
     const handleLogout = async () => { await logoutUser(); setView(ViewState.DASHBOARD); };
-    const isBlue = theme === 'blue';
 
     const themes: { id: Theme; label: string; gradient: string; desc: string }[] = [
-        { id: 'pink', label: 'Baby Pink', gradient: 'from-pink-300 to-rose-300', desc: 'Light & warm' },
-        { id: 'blue', label: 'Futuristic Blue', gradient: 'from-blue-500 to-cyan-500', desc: 'Navy & sea blue' },
+        { id: 'blue', label: 'Dark AI Premium', gradient: 'from-blue-500 to-cyan-500', desc: 'Default cinematic aesthetic' },
     ];
 
     const settingsItems = [
@@ -38,43 +36,39 @@ const Settings: React.FC<SettingsProps> = ({ user, theme, setTheme, setView }) =
         { id: 'about', icon: Info, label: t('settings.sections.about'), desc: 'Version 1.0.0' },
     ];
 
-    const accent = isBlue ? 'blue' : 'pink';
-    const accentColor = isBlue ? 'text-blue-400' : 'text-pink-500';
-    const accentBg = isBlue ? 'bg-blue-500/10' : 'bg-pink-50';
-    const borderColor = isBlue ? 'border-blue-500/20' : 'border-gray-100';
-    const cardBg = isBlue ? 'bg-[#112240]' : 'bg-white';
-
     const renderDetail = () => {
         switch (activeTab) {
             case 'account':
                 return (
                     <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-6">
-                        <div className={`p-6 rounded-3xl border ${borderColor} ${cardBg} shadow-sm`}>
-                            <h4 className="text-lg font-bold mb-4 flex items-center gap-2">
-                                <UserCheck className={accentColor} size={20} /> Personal Information
+                        <div className="p-8 rounded-[2rem] border border-white/5 bg-[#030303] shadow-lg">
+                            <h4 className="text-lg font-medium mb-6 flex items-center gap-3 text-white">
+                                <UserCheck className="text-blue-400" size={24} /> Personal Information
                             </h4>
-                            <div className="space-y-4">
-                                <div className="flex flex-col gap-1">
-                                    <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">Display Name</span>
-                                    <div className={`p-3 rounded-xl border ${borderColor} ${isBlue ? 'bg-[#0a192f]' : 'bg-gray-50'} flex justify-between items-center`}>
-                                        <span className="font-semibold">{user?.displayName || "GenFit User"}</span>
-                                        <button className={`${accentColor} text-sm font-bold`}>Edit</button>
+                            <div className="space-y-6">
+                                <div className="flex flex-col gap-2">
+                                    <span className="text-[10px] font-bold text-white/40 uppercase tracking-widest pl-2">Display Name</span>
+                                    <div className="p-4 rounded-xl border border-white/5 bg-[#050505] flex justify-between items-center transition-all hover:bg-white/5 cursor-pointer group">
+                                        <span className="font-semibold text-white tracking-wide">{user?.displayName || "GenFit User"}</span>
+                                        <button className="text-[10px] uppercase tracking-widest text-white/30 font-bold group-hover:text-blue-400 transition-colors">Edit</button>
                                     </div>
                                 </div>
-                                <div className="flex flex-col gap-1">
-                                    <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">Email Address</span>
-                                    <div className={`p-3 rounded-xl border ${borderColor} ${isBlue ? 'bg-[#0a192f]' : 'bg-gray-50'}`}>
-                                        <span className="font-semibold">{user?.email}</span>
+                                <div className="flex flex-col gap-2">
+                                    <span className="text-[10px] font-bold text-white/40 uppercase tracking-widest pl-2">Email Address</span>
+                                    <div className="p-4 rounded-xl border border-white/5 bg-[#050505]">
+                                        <span className="font-semibold text-white tracking-wide">{user?.email || "user@genfit.app"}</span>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div className={`p-6 rounded-3xl border border-red-500/20 ${isBlue ? 'bg-red-500/5' : 'bg-red-50'} shadow-sm`}>
-                            <h4 className="text-lg font-bold mb-4 text-red-500 flex items-center gap-2">
-                                <Trash2 size={20} /> Danger Zone
+                        <div className="p-8 rounded-[2rem] border border-rose-500/10 bg-rose-500/5 shadow-lg">
+                            <h4 className="text-lg font-medium mb-4 text-rose-500 flex items-center gap-3">
+                                <Trash2 size={24} /> Danger Zone
                             </h4>
-                            <p className="text-sm text-gray-500 mb-4">Once you delete your account, there is no going back. Please be certain.</p>
-                            <button className="px-6 py-2 rounded-xl bg-red-500 text-white font-bold hover:bg-red-600 transition-colors">Delete Account</button>
+                            <p className="text-sm text-white/40 font-light leading-relaxed mb-6">Once you delete your account, there is no going back. Please be certain. All telemetry and biometric data will be permanently wiped from the servers.</p>
+                            <button className="px-6 py-3.5 rounded-xl border border-rose-500/20 bg-rose-500/10 text-rose-400 font-bold text-[11px] uppercase tracking-widest hover:bg-rose-500 hover:text-white transition-all active:scale-95 shadow-[0_0_15px_rgba(244,63,94,0.1)]">
+                                Terminate Account
+                            </button>
                         </div>
                     </motion.div>
                 );
@@ -87,13 +81,13 @@ const Settings: React.FC<SettingsProps> = ({ user, theme, setTheme, setView }) =
                             { label: 'Social Updates', desc: 'Stay updated with friend activity', active: true },
                             { label: 'Achievement Badges', desc: 'Notify when you unlock new rewards', active: true },
                         ].map((n, i) => (
-                            <div key={i} className={`p-4 rounded-2xl border ${borderColor} ${cardBg} flex items-center justify-between`}>
+                            <div key={i} className={`p-6 rounded-[1.5rem] border transition-all ${n.active ? 'border-white/10 bg-[#050505]' : 'border-white/5 bg-[#030303]'} flex items-center justify-between group`}>
                                 <div>
-                                    <span className="font-bold block">{n.label}</span>
-                                    <span className="text-xs text-gray-400">{n.desc}</span>
+                                    <span className="font-medium text-white tracking-wide block mb-1">{n.label}</span>
+                                    <span className="text-xs text-white/40 font-light tracking-wide">{n.desc}</span>
                                 </div>
-                                <div className={`w-12 h-6 rounded-full relative transition-colors ${n.active ? (isBlue ? 'bg-blue-500' : 'bg-pink-500') : 'bg-gray-300'}`}>
-                                    <div className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all ${n.active ? 'right-1' : 'left-1'}`} />
+                                <div className={`w-12 h-6 rounded-full relative transition-colors ${n.active ? 'bg-blue-500 shadow-[0_0_15px_rgba(59,130,246,0.3)]' : 'bg-white/10'} cursor-pointer`}>
+                                    <div className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all shadow-md ${n.active ? 'right-1' : 'left-1'}`} />
                                 </div>
                             </div>
                         ))}
@@ -101,40 +95,40 @@ const Settings: React.FC<SettingsProps> = ({ user, theme, setTheme, setView }) =
                 );
             case 'privacy':
                 return (
-                    <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-4">
-                        <div className={`p-6 rounded-3xl border ${borderColor} ${cardBg} shadow-sm`}>
-                            <h4 className="text-lg font-bold mb-4 flex items-center gap-2">
-                                <ShieldCheck className={accentColor} size={20} /> Security Settings
+                    <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-6">
+                        <div className="p-8 rounded-[2rem] border border-white/5 bg-[#030303] shadow-lg">
+                            <h4 className="text-lg font-medium mb-6 flex items-center gap-3 text-white">
+                                <ShieldCheck className="text-blue-400" size={24} /> Security Matrix
                             </h4>
-                            <button className={`w-full flex items-center justify-between p-4 rounded-xl border ${borderColor} hover:${accentBg} transition mb-3`}>
-                                <div className="flex items-center gap-3">
-                                    <Lock size={18} />
-                                    <span className="font-semibold">Change Password</span>
+                            <button className="w-full flex items-center justify-between p-5 rounded-2xl border border-white/5 hover:border-white/10 hover:bg-[#050505] transition-all mb-4 group">
+                                <div className="flex items-center gap-4">
+                                    <Lock size={20} className="text-white/50 group-hover:text-blue-400 transition-colors" />
+                                    <span className="font-semibold text-white tracking-wide">Change Password</span>
                                 </div>
-                                <ChevronRight size={18} />
+                                <ChevronRight size={18} className="text-white/20 group-hover:text-white/60 transition-colors" />
                             </button>
-                            <button className={`w-full flex items-center justify-between p-4 rounded-xl border ${borderColor} hover:${accentBg} transition`}>
-                                <div className="flex items-center gap-3">
-                                    <Mail size={18} />
-                                    <span className="font-semibold">Enable 2FA Authentication</span>
+                            <button className="w-full flex items-center justify-between p-5 rounded-2xl border border-white/5 hover:border-white/10 hover:bg-[#050505] transition-all group">
+                                <div className="flex items-center gap-4">
+                                    <Mail size={20} className="text-white/50 group-hover:text-blue-400 transition-colors" />
+                                    <span className="font-semibold text-white tracking-wide">Enable 2FA Authentication</span>
                                 </div>
-                                <ChevronRight size={18} />
+                                <ChevronRight size={18} className="text-white/20 group-hover:text-white/60 transition-colors" />
                             </button>
                         </div>
-                        <div className={`p-4 rounded-2xl border ${borderColor} ${cardBg} flex items-center justify-between`}>
+                        <div className="p-6 rounded-[1.5rem] border border-white/5 bg-[#030303] flex items-center justify-between">
                             <div>
-                                <span className="font-bold block">Private Profile</span>
-                                <span className="text-xs text-gray-400">Hide your progress from others</span>
+                                <span className="font-medium text-white tracking-wide block mb-1">Private Profile</span>
+                                <span className="text-xs text-white/40 font-light">Hide your progress telemetry from the global network</span>
                             </div>
-                            <div className={`w-12 h-6 rounded-full bg-gray-300 relative`}>
-                                <div className="absolute top-1 left-1 w-4 h-4 bg-white rounded-full" />
+                            <div className="w-12 h-6 rounded-full bg-white/10 relative cursor-pointer">
+                                <div className="absolute top-1 left-1 w-4 h-4 bg-white/50 rounded-full" />
                             </div>
                         </div>
                     </motion.div>
                 );
             case 'language':
                 return (
-                    <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-2">
+                    <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-4">
                         {[
                             { label: 'English (US)', id: 'en' },
                             { label: 'Hindi', id: 'hi' },
@@ -144,60 +138,66 @@ const Settings: React.FC<SettingsProps> = ({ user, theme, setTheme, setView }) =
                         ].map((l, i) => (
                             <button key={i} 
                                 onClick={() => setLanguage(l.id as any)}
-                                className={`w-full flex items-center justify-between p-4 rounded-2xl border ${language === l.id ? (isBlue ? 'border-blue-500 bg-blue-500/10' : 'border-pink-500 bg-pink-50 text-pink-500') : borderColor + ' ' + cardBg} transition`}>
-                                <span className="font-bold">{l.label}</span>
-                                {language === l.id && <Check size={18} />}
+                                className={`w-full flex items-center justify-between p-5 rounded-[1.5rem] border transition-all ${language === l.id ? 'border-blue-500/50 bg-blue-500/10 text-white shadow-[0_0_20px_rgba(59,130,246,0.1)]' : 'border-white/5 bg-[#030303] text-white/60 hover:text-white hover:bg-white/5'}`}>
+                                <span className={`font-medium tracking-wide ${language === l.id ? 'font-bold' : ''}`}>{l.label}</span>
+                                {language === l.id && <Check size={20} className="text-blue-400" />}
                             </button>
                         ))}
                     </motion.div>
                 );
             case 'data':
                 return (
-                    <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-4">
-                        <div className={`p-6 rounded-3xl border ${borderColor} ${cardBg} shadow-sm text-center`}>
-                            <Database className={`mx-auto mb-4 ${accentColor}`} size={40} />
-                            <h4 className="text-xl font-bold mb-1">Storage Usage</h4>
-                            <p className="text-sm text-gray-500 mb-4">12.4 MB of 100 MB used</p>
-                            <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden mb-6">
-                                <div className={`h-full ${isBlue ? 'bg-blue-500' : 'bg-pink-500'}`} style={{ width: '12.4%' }} />
+                    <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-6">
+                        <div className="p-8 rounded-[2rem] border border-white/5 bg-[#030303] shadow-lg text-center relative overflow-hidden">
+                            <div className="absolute top-[-50%] left-[-50%] w-[200%] h-[200%] bg-blue-500/5 blur-[80px] rounded-full pointer-events-none" />
+                            <div className="relative z-10">
+                                <Database className="mx-auto mb-5 text-blue-400 drop-shadow-lg" size={48} />
+                                <h4 className="text-2xl font-medium tracking-tight text-white mb-2">Storage Usage</h4>
+                                <p className="text-[11px] font-bold uppercase tracking-widest text-white/40 mb-6">12.4 MB allocated</p>
+                                <div className="w-full h-1.5 bg-white/5 rounded-full overflow-hidden mb-8 shadow-inner">
+                                    <div className="h-full bg-gradient-to-r from-blue-600 to-sky-400 shadow-[0_0_10px_rgba(56,189,248,0.5)]" style={{ width: '12.4%' }} />
+                                </div>
+                                <button className="w-full py-4 rounded-xl font-bold border border-white/5 bg-[#050505] text-white/60 hover:text-white hover:bg-white/10 hover:border-white/10 transition-all flex items-center justify-center gap-3 text-[11px] uppercase tracking-widest active:scale-95">
+                                    <Trash2 size={16} /> Clear App Cache
+                                </button>
                             </div>
-                            <button className={`w-full py-3 rounded-xl font-bold border ${borderColor} hover:${accentBg} transition flex items-center justify-center gap-2`}>
-                                <Trash2 size={18} /> Clear App Cache
-                            </button>
                         </div>
-                        <button className={`w-full flex items-center justify-between p-5 rounded-2xl border ${borderColor} ${cardBg} hover:${accentBg} transition`}>
-                            <div className="flex items-center gap-3">
-                                <Download size={20} className={accentColor} />
+                        <button className="w-full flex items-center justify-between p-6 rounded-[2rem] border border-white/5 bg-[#030303] hover:bg-[#050505] hover:border-white/10 transition-all group">
+                            <div className="flex items-center gap-4">
+                                <div className="p-3 rounded-xl bg-blue-500/10 border border-blue-500/20 group-hover:scale-110 transition-transform">
+                                    <Download size={22} className="text-blue-400" />
+                                </div>
                                 <div className="text-left">
-                                    <span className="font-bold block">Export My Data</span>
-                                    <span className="text-xs text-gray-400">Download your stats as JSON/CSV</span>
+                                    <span className="font-medium text-white block mb-1">Export Telemetry Data</span>
+                                    <span className="text-[10px] uppercase font-bold tracking-widest text-white/30">Download stats as JSON/CSV</span>
                                 </div>
                             </div>
-                            <ChevronRight size={18} />
+                            <ChevronRight size={18} className="text-white/20 group-hover:text-white/60 transition-colors" />
                         </button>
                     </motion.div>
                 );
             case 'help':
                 return (
                     <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-4">
-                        <div className={`p-4 rounded-2xl border ${borderColor} ${cardBg} hover:shadow-md transition cursor-pointer`}>
-                            <h4 className="font-bold flex items-center gap-2 mb-1">
-                                <MessageSquare size={18} className={accentColor} /> Contact Support
+                        <div className="p-6 rounded-[1.5rem] border border-white/5 bg-[#030303] hover:border-white/10 hover:bg-[#050505] transition-all cursor-pointer group">
+                            <h4 className="font-medium flex items-center gap-3 mb-2 text-white">
+                                <MessageSquare size={20} className="text-blue-400 group-hover:scale-110 transition-transform" /> Contact Support
                             </h4>
-                            <p className="text-xs text-gray-400">Our team is here 24/7 to help you</p>
+                            <p className="text-xs text-white/40 font-light ml-8">Our core team is here 24/7 to resolve technical anomalies.</p>
                         </div>
-                        <div className={`p-4 rounded-2xl border ${borderColor} ${cardBg} hover:shadow-md transition cursor-pointer`}>
-                            <h4 className="font-bold flex items-center gap-2 mb-1">
-                                <ExternalLink size={18} className={accentColor} /> Help Center
+                        <div className="p-6 rounded-[1.5rem] border border-white/5 bg-[#030303] hover:border-white/10 hover:bg-[#050505] transition-all cursor-pointer group">
+                            <h4 className="font-medium flex items-center gap-3 mb-2 text-white">
+                                <ExternalLink size={20} className="text-blue-400 group-hover:scale-110 transition-transform" /> Documentation Center
                             </h4>
-                            <p className="text-xs text-gray-400">Read our guides and documentation</p>
+                            <p className="text-xs text-white/40 font-light ml-8">Review system guides and advanced metric manuals.</p>
                         </div>
-                        <div className="mt-8">
-                            <h4 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">Frequently Asked Questions</h4>
+                        <div className="mt-10">
+                            <h4 className="text-[10px] font-bold text-white/30 uppercase tracking-[0.2em] mb-5 px-2">Knowledge Base Core</h4>
                             <div className="space-y-3">
-                                {['How to track workouts?', 'Resetting my password?', 'Syncing with Apple Health?'].map((q, i) => (
-                                    <div key={i} className={`p-4 rounded-xl border ${borderColor} ${cardBg} text-sm font-semibold`}>
+                                {['How to calibrate workouts?', 'Resetting biometric profiles?', 'Syncing external data sources?'].map((q, i) => (
+                                    <div key={i} className="p-5 rounded-[1.5rem] border border-white/5 bg-[#050505] text-sm font-medium tracking-wide text-white/80 hover:text-white hover:bg-white/[0.03] transition-colors cursor-pointer flex justify-between items-center group">
                                         {q}
+                                        <ChevronRight size={16} className="text-white/20 group-hover:text-white/60 transition-colors" />
                                     </div>
                                 ))}
                             </div>
@@ -206,36 +206,34 @@ const Settings: React.FC<SettingsProps> = ({ user, theme, setTheme, setView }) =
                 );
             case 'about':
                 return (
-                    <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="text-center space-y-6">
-                        <div className={`w-28 h-28 mx-auto rounded-[2.5rem] ${isBlue ? 'bg-gradient-to-br from-blue-600 to-cyan-500 shadow-blue-500/30' : 'bg-gradient-to-br from-pink-500 to-rose-400 shadow-pink-500/30'} shadow-2xl flex items-center justify-center p-6 mb-2`}>
-                            <img src="/logo-icon.png" alt="GenFit" className="w-full h-full object-contain filter brightness-0 invert" 
-                                 onError={(e) => {
-                                     (e.target as HTMLImageElement).style.display = 'none';
-                                     (e.target as any).parentNode.innerHTML = '<span class="text-white text-4xl font-black">G</span>';
-                                 }} 
-                            />
+                    <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="text-center space-y-8 py-4">
+                        <div className="relative mx-auto w-32 h-32 group">
+                            <div className="absolute inset-0 bg-blue-500/20 blur-2xl rounded-full group-hover:bg-blue-500/30 transition-colors" />
+                            <div className="w-full h-full rounded-[2.5rem] bg-[#050505] border border-white/10 shadow-2xl flex items-center justify-center p-6 relative z-10 transition-transform group-hover:scale-105 duration-500">
+                                <Zap className="w-full h-full text-blue-400 drop-shadow-[0_0_15px_rgba(59,130,246,0.5)] fill-blue-500/20" />
+                            </div>
                         </div>
                         <div>
-                            <h3 className="text-2xl font-black">GenFit</h3>
-                            <p className="text-gray-400 font-medium">Elevate Your Life. Every Step Counts.</p>
+                            <h3 className="text-4xl font-black tracking-tight text-white mb-2 tracking-[0.1em]">GENFIT<span className="text-blue-500 text-5xl">.</span></h3>
+                            <p className="text-white/40 font-light tracking-widest uppercase text-xs">Maximum Potential Unlocked</p>
                         </div>
-                        <div className={`p-4 rounded-2xl border ${borderColor} ${cardBg} inline-block px-8`}>
-                            <span className="text-xs font-bold uppercase tracking-widest text-gray-400 block mb-1">Version</span>
-                            <span className="font-bold text-lg">1.0.0 (Build 240315)</span>
+                        <div className="p-5 rounded-2xl border border-white/5 bg-[#030303] inline-block px-10">
+                            <span className="text-[9px] font-bold uppercase tracking-[0.3em] text-white/30 block mb-2">Build Configuration</span>
+                            <span className="font-bold text-lg text-white tracking-wide">v2.0.0-beta</span>
                         </div>
-                        <div className="flex justify-center gap-6 pt-4">
-                            <a href="https://github.com/AbhayxRajput07" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-black transition-colors">
-                                <Github size={24} />
+                        <div className="flex justify-center gap-8 pt-6">
+                            <a href="https://github.com/AbhayxRajput07" target="_blank" rel="noopener noreferrer" className="p-3 rounded-xl border border-white/5 bg-[#030303] text-white/40 hover:text-white hover:border-white/20 hover:scale-110 transition-all">
+                                <Github size={20} />
                             </a>
-                            <a href="https://instagram.com/yourusername" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-pink-500 transition-colors">
-                                <Instagram size={24} />
+                            <a href="https://instagram.com/yourusername" target="_blank" rel="noopener noreferrer" className="p-3 rounded-xl border border-white/5 bg-[#030303] text-white/40 hover:text-sky-400 hover:border-sky-500/30 hover:scale-110 transition-all shadow-none hover:shadow-[0_0_15px_rgba(56,189,248,0.2)]">
+                                <Instagram size={20} />
                             </a>
-                            <a href="mailto:rajput.abhay1713@gmail.com" className="text-gray-400 hover:text-red-500 transition-colors">
-                                <Mail size={24} />
+                            <a href="mailto:rajput.abhay1713@gmail.com" className="p-3 rounded-xl border border-white/5 bg-[#030303] text-white/40 hover:text-rose-400 hover:border-rose-500/30 hover:scale-110 transition-all shadow-none hover:shadow-[0_0_15px_rgba(244,63,94,0.2)]">
+                                <Mail size={20} />
                             </a>
                         </div>
-                        <p className="text-[10px] text-gray-300 font-bold uppercase tracking-tighter">
-                            Designed & Engineered with ❤️ by the GenFit Team
+                        <p className="text-[9px] text-white/20 font-bold uppercase tracking-[0.2em] pt-4">
+                            System Engineered by Abhay Rajput
                         </p>
                     </motion.div>
                 );
@@ -245,64 +243,82 @@ const Settings: React.FC<SettingsProps> = ({ user, theme, setTheme, setView }) =
     };
 
     return (
-        <div className={`w-full min-h-screen p-6 md:p-12 transition-colors duration-500 ${isBlue ? 'bg-[#0a192f] text-white' : 'bg-gradient-to-br from-white via-rose-50 to-pink-100 text-black'}`}>
-            <div className="max-w-4xl mx-auto">
+        <div className="w-full min-h-screen bg-[#010101] text-white px-4 md:px-8 lg:px-12 py-8 md:py-12 overflow-x-hidden selection:bg-blue-500/30 pb-20">
+            {/* ── Ambient Glow ── */}
+            <div className="fixed top-[-20%] right-[-10%] w-[50vw] h-[50vw] bg-blue-600/10 blur-[150px] rounded-full pointer-events-none" />
+            <div className="fixed bottom-[-10%] left-[-10%] w-[40vw] h-[40vw] bg-sky-600/5 blur-[150px] rounded-full pointer-events-none" />
+
+            <div className="max-w-6xl mx-auto relative z-10">
                 <AnimatePresence mode="wait">
                     {!activeTab ? (
-                        <motion.div key="main" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="space-y-8">
-                            <div className="flex justify-between items-end">
-                                <div>
-                                    <h2 className="text-4xl font-extrabold tracking-tight">{t('settings.title')}</h2>
-                                    <p className={`mt-2 text-lg ${isBlue ? 'text-gray-400' : 'text-gray-500'}`}>{t('settings.subtitle')}</p>
+                        <motion.div key="main" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="space-y-10">
+                            <div className="flex justify-between items-end mb-4">
+                                <div className="flex items-center gap-4">
+                                    <div className="p-3 rounded-2xl bg-[#030303] border border-white/10 shadow-lg hidden md:block">
+                                        <SettingsIcon size={24} className="text-white" />
+                                    </div>
+                                    <div>
+                                        <h2 className="text-4xl md:text-5xl font-medium tracking-tight text-white mb-2">{t('settings.title')}</h2>
+                                        <p className="text-sm font-light tracking-wide text-white/50">{t('settings.subtitle')}</p>
+                                    </div>
                                 </div>
-                                <div className={`hidden md:flex items-center gap-2 px-4 py-2 rounded-2xl border ${borderColor} ${cardBg} shadow-sm`}>
-                                    <div className={`w-2 h-2 rounded-full animate-pulse ${isBlue ? 'bg-blue-500 shadow-blue-500/50' : 'bg-pink-500 shadow-pink-500/50'}`} />
-                                    <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400">System Live</span>
+                                <div className="hidden lg:flex items-center gap-3 px-4 py-2.5 rounded-xl border border-emerald-500/20 bg-emerald-500/5 shadow-[0_0_15px_rgba(16,185,129,0.05)]">
+                                    <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_8px_rgba(52,211,153,0.8)]" />
+                                    <span className="text-[10px] font-bold uppercase tracking-widest text-emerald-400/80">System Live</span>
                                 </div>
                             </div>
 
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                                <div className="md:col-span-2 space-y-6">
+                            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                                <div className="lg:col-span-2 space-y-8">
                                     {/* Theme Picker */}
-                                    <div className={`p-8 rounded-3xl shadow-lg border ${isBlue ? 'bg-[#112240] border-blue-500/20' : 'bg-white border-black/20'}`}>
-                                        <h3 className="font-bold flex items-center gap-3 mb-6 text-xl">
-                                            <Palette className={isBlue ? 'text-blue-400' : 'text-pink-500'} /> App Theme
+                                    <div className="p-8 md:p-10 rounded-[2.5rem] shadow-2xl border border-white/5 bg-[#030303] relative overflow-hidden">
+                                        <div className="absolute top-0 right-0 p-10 opacity-5 pointer-events-none">
+                                            <Palette size={120} />
+                                        </div>
+                                        <h3 className="font-medium tracking-tight flex items-center gap-3 mb-8 text-2xl text-white relative z-10">
+                                            <Palette className="text-blue-400" size={24} /> Application Aesthetics
                                         </h3>
-                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 relative z-10">
                                             {themes.map(th => (
-                                                <button key={th.id} onClick={() => setTheme(th.id)}
-                                                    className={`p-5 rounded-2xl border-2 transition-all flex flex-col items-center gap-3 relative ${theme === th.id
-                                                        ? (isBlue ? 'border-blue-500 bg-blue-500/10 shadow-lg' : 'border-pink-400 bg-pink-50 shadow-lg')
-                                                        : (isBlue ? 'border-blue-500/20 hover:border-blue-500/40 hover:bg-blue-500/5' : 'border-gray-200 hover:border-pink-200 hover:bg-pink-50/50')}`}>
-                                                    {theme === th.id && (
-                                                        <motion.div layoutId="check" className={`absolute top-2 right-2 w-6 h-6 rounded-full flex items-center justify-center ${isBlue ? 'bg-blue-500' : 'bg-pink-500'}`}>
-                                                            <Check className="w-4 h-4 text-white" />
-                                                        </motion.div>
-                                                    )}
-                                                    <div className={`w-14 h-14 rounded-full bg-gradient-to-br ${th.gradient} shadow-md border border-white/30`}></div>
-                                                    <span className="font-semibold">{th.label}</span>
-                                                    <span className={`text-xs ${isBlue ? 'text-gray-500' : 'text-gray-400'}`}>{th.desc}</span>
-                                                </button>
+                                                <div key={th.id} className="p-6 rounded-[1.5rem] border-2 transition-all flex flex-col items-center gap-4 relative border-blue-500/50 bg-blue-500/10 shadow-[0_0_30px_rgba(59,130,246,0.15)] cursor-default">
+                                                    <div className="absolute top-3 right-3 w-6 h-6 rounded-full flex items-center justify-center bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.5)]">
+                                                        <Check className="w-3.5 h-3.5 text-white" />
+                                                    </div>
+                                                    <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-600 to-sky-400 shadow-[0_0_20px_rgba(56,189,248,0.3)] border-2 border-white/20"></div>
+                                                    <div className="text-center">
+                                                        <span className="font-bold text-white block mb-1 tracking-wide">{th.label}</span>
+                                                        <span className="text-[10px] uppercase font-bold tracking-widest text-white/50">{th.desc}</span>
+                                                    </div>
+                                                </div>
                                             ))}
+                                            
+                                            {/* Disabled Light Theme Placeholders to signify transition */}
+                                            <div className="p-6 rounded-[1.5rem] border border-white/5 bg-[#050505] flex flex-col items-center gap-4 opacity-40 cursor-not-allowed">
+                                                <div className="w-16 h-16 rounded-full bg-slate-100 border-2 border-white/5"></div>
+                                                <div className="text-center">
+                                                    <span className="font-medium text-white block mb-1 tracking-wide line-through decoration-white/30">Rose Quartz</span>
+                                                    <span className="text-[9px] uppercase font-bold tracking-widest text-white/30">Deprecated</span>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
 
                                     {/* Settings List */}
-                                    <div className={`p-6 rounded-3xl shadow-lg border space-y-1 ${isBlue ? 'bg-[#112240] border-blue-500/20' : 'bg-white border-black/20'}`}>
+                                    <div className="p-6 md:p-8 rounded-[2.5rem] shadow-2xl border border-white/5 bg-[#030303] space-y-2">
                                         {settingsItems.map((item, idx) => {
                                             const Icon = item.icon;
                                             return (
-                                                <button key={idx} onClick={() => setActiveTab(item.id)} className={`w-full group flex items-center justify-between p-4 rounded-2xl transition-all ${isBlue ? 'hover:bg-blue-500/10' : 'hover:bg-pink-50'}`}>
-                                                    <div className="flex items-center gap-4">
-                                                        <div className={`p-3 rounded-xl transition-all ${isBlue ? 'bg-blue-500/10 text-blue-400 group-hover:bg-blue-500 group-hover:text-white shadow-blue-500/0 group-hover:shadow-blue-500/40' : 'bg-pink-50 text-pink-500 group-hover:bg-pink-500 group-hover:text-white group-hover:shadow-pink-500/40'} group-hover:shadow-xl`}>
+                                                <button key={idx} onClick={() => setActiveTab(item.id)} className="w-full group flex items-center justify-between p-5 rounded-[1.5rem] transition-all hover:bg-white/[0.03] hover:border-white/10 border border-transparent">
+                                                    <div className="flex items-center gap-5">
+                                                        <div className="p-3.5 rounded-xl transition-all border border-white/5 bg-[#050505] group-hover:bg-blue-500/10 group-hover:border-blue-500/30 group-hover:text-blue-400 text-white/70 shadow-lg">
                                                             <Icon size={20} />
                                                         </div>
                                                         <div className="text-left">
-                                                            <span className="font-bold block text-lg">{item.label}</span>
-                                                            <span className={`text-xs ${isBlue ? 'text-gray-500' : 'text-gray-400'}`}>{item.desc}</span>
+                                                            <span className="font-medium tracking-wide block text-lg text-white mb-0.5">{item.label}</span>
+                                                            <span className="text-[11px] font-bold text-white/30 uppercase tracking-widest">{item.desc}</span>
                                                         </div>
                                                     </div>
-                                                    <ChevronRight className={`transition-transform group-hover:translate-x-1 ${isBlue ? 'text-gray-500' : 'text-gray-400'}`} />
+                                                    <ChevronRight className="transition-transform group-hover:translate-x-1 text-white/20 group-hover:text-white/60" size={20} />
                                                 </button>
                                             );
                                         })}
@@ -310,48 +326,67 @@ const Settings: React.FC<SettingsProps> = ({ user, theme, setTheme, setView }) =
                                 </div>
 
                                 {/* Account Panel */}
-                                <div className="space-y-6">
-                                    <div className={`p-8 rounded-3xl shadow-lg border flex flex-col items-center text-center ${isBlue ? 'bg-[#112240] border-blue-500/20' : 'bg-white border-black/20'}`}>
-                                        <div className={`w-24 h-24 rounded-full mb-4 overflow-hidden shadow-inner p-1 ${isBlue ? 'bg-gradient-to-tr from-blue-500 to-cyan-500' : 'bg-gradient-to-tr from-pink-300 to-rose-300'}`}>
-                                            <div className={`w-full h-full rounded-full overflow-hidden ${isBlue ? 'bg-[#0a192f]' : 'bg-white'}`}>
-                                                {user ? (
-                                                    <img src={`https://api.dicebear.com/7.x/fun-emoji/svg?seed=${user?.name || user?.email || 'user'}`} alt="avatar" className="w-full h-full object-cover" />
-                                                ) : (
-                                                    <User className={`w-full h-full p-6 ${isBlue ? 'text-gray-600' : 'text-gray-300'}`} />
-                                                )}
+                                <div className="space-y-8">
+                                    <div className="p-10 rounded-[2.5rem] shadow-2xl border border-white/5 flex flex-col items-center text-center bg-[#030303] relative overflow-hidden group">
+                                        <div className="absolute inset-0 bg-blue-500/5 opacity-0 group-hover:opacity-100 transition-opacity blur-2xl pointer-events-none" />
+                                        <div className="relative z-10 w-full flex flex-col items-center">
+                                            <div className="w-28 h-28 rounded-full mb-6 overflow-hidden p-1.5 bg-[#050505] border border-white/10 shadow-[0_0_30px_rgba(0,0,0,0.5)]">
+                                                <div className="w-full h-full rounded-full overflow-hidden bg-[#030303] border border-white/10">
+                                                    {user ? (
+                                                        <img src={`https://api.dicebear.com/7.x/fun-emoji/svg?seed=${user?.name || user?.email || 'user'}`} alt="avatar" className="w-full h-full object-cover filter saturate-150" />
+                                                    ) : (
+                                                        <User className="w-full h-full p-6 text-white/20" />
+                                                    )}
+                                                </div>
                                             </div>
+                                            <h3 className="text-2xl font-medium tracking-tight text-white mb-1">{user ? user.displayName || "GenFit User" : "Offline"}</h3>
+                                            {user && <p className="text-xs font-light tracking-widest text-white/40 mb-8">{user.email}</p>}
+                                            {user && (
+                                                <button onClick={handleLogout}
+                                                    className="w-full py-4 rounded-[1.5rem] font-bold text-[11px] uppercase tracking-widest flex items-center justify-center gap-3 transition-all border border-rose-500/20 bg-rose-500/5 text-rose-400 hover:bg-rose-500 hover:text-white hover:shadow-[0_0_20px_rgba(244,63,94,0.3)] active:scale-95">
+                                                    <LogOut className="w-4 h-4" /> Disconnect
+                                                </button>
+                                            )}
                                         </div>
-                                        <h3 className="text-xl font-bold">{user ? user.name || "GenFit User" : "Not Logged In"}</h3>
-                                        {user && <p className={`text-sm mb-6 ${isBlue ? 'text-gray-400' : 'text-gray-500'}`}>{user.email}</p>}
-                                        {user && (
-                                            <button onClick={handleLogout}
-                                                className="w-full py-4 px-4 rounded-2xl font-black flex items-center justify-center gap-2 transition border bg-red-50 border-red-200 text-red-600 hover:bg-red-100 hover:shadow-lg active:scale-95">
-                                                <LogOut className="w-5 h-5" /> Sign Out
-                                            </button>
-                                        )}
                                     </div>
-                                    <div className={`p-6 rounded-3xl shadow-lg border ${isBlue ? 'bg-gradient-to-br from-blue-600 to-cyan-700 border-none' : 'bg-gradient-to-br from-pink-500 to-rose-600 border-none'} text-white`}>
-                                        <h4 className="font-black text-lg mb-2">GenFit Pro</h4>
-                                        <p className="text-sm opacity-80 mb-6">Unlock advanced blueprint analysis and AI nutrition coaching.</p>
-                                        <button className="w-full py-3 rounded-2xl bg-white text-black font-black text-sm shadow-xl active:scale-95 transition-transform">Upgrade Now</button>
+                                    
+                                    <div className="p-8 rounded-[2.5rem] shadow-[0_0_40px_rgba(59,130,246,0.15)] border border-blue-400/30 bg-gradient-to-br from-blue-900/40 to-[#030303] text-white relative overflow-hidden">
+                                        <div className="absolute top-0 right-0 w-32 h-32 bg-sky-500/20 blur-3xl rounded-full" />
+                                        <div className="relative z-10">
+                                            <div className="flex items-center gap-2 mb-3">
+                                                <Crown size={20} className="text-amber-400" />
+                                                <h4 className="font-bold text-xl tracking-tight text-white">GenFit <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-200 to-yellow-500">PRO</span></h4>
+                                            </div>
+                                            <p className="text-[13px] font-light text-white/60 mb-6 leading-relaxed">
+                                                Unlock maximum biometric analysis and unrestricted AI coaching capabilities.
+                                            </p>
+                                            <button className="w-full py-3.5 rounded-xl bg-white text-black font-bold text-[11px] uppercase tracking-widest shadow-[0_0_20px_rgba(255,255,255,0.2)] active:scale-95 transition-all hover:bg-gray-100">
+                                                Initiate Upgrade
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </motion.div>
                     ) : (
-                        <motion.div key="detail" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-8">
-                            <button onClick={() => setActiveTab(null)} className={`flex items-center gap-2 font-bold mb-4 opacity-60 hover:opacity-100 transition-opacity`}>
-                                <ChevronLeft size={20} /> Back to Settings
+                        <motion.div key="detail" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-8 max-w-4xl mx-auto">
+                            <button onClick={() => setActiveTab(null)} className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-white/40 hover:text-white transition-colors mb-2 border border-transparent hover:border-white/10 py-2 px-3 rounded-lg hover:bg-white/5">
+                                <ChevronLeft size={16} /> Return to Main Menu
                             </button>
-                            <div>
-                                <h2 className="text-4xl font-extrabold tracking-tight">
-                                    {settingsItems.find(i => i.id === activeTab)?.label}
-                                </h2>
-                                <p className={`mt-2 text-lg ${isBlue ? 'text-gray-400' : 'text-gray-500'}`}>
-                                    {settingsItems.find(i => i.id === activeTab)?.desc}
-                                </p>
+                            <div className="flex items-center gap-4 border-b border-white/5 pb-6">
+                                <div className="p-4 rounded-2xl bg-blue-500/10 border border-blue-500/20 shadow-[0_0_15px_rgba(59,130,246,0.1)]">
+                                    {React.createElement(settingsItems.find(i => i.id === activeTab)?.icon || SettingsIcon, { size: 28, className: "text-blue-400" })}
+                                </div>
+                                <div>
+                                    <h2 className="text-3xl font-medium tracking-tight text-white mb-1">
+                                        {settingsItems.find(i => i.id === activeTab)?.label}
+                                    </h2>
+                                    <p className="text-[11px] font-bold uppercase tracking-widest text-white/30">
+                                        {settingsItems.find(i => i.id === activeTab)?.desc}
+                                    </p>
+                                </div>
                             </div>
-                            <div className="max-w-2xl">
+                            <div className="max-w-3xl">
                                 {renderDetail()}
                             </div>
                         </motion.div>

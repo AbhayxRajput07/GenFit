@@ -17,7 +17,7 @@ const App: React.FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [theme, setTheme] = useState<Theme>(() => {
     const saved = localStorage.getItem('genfit_theme');
-    return (saved as Theme) || 'pink';
+    return (saved as Theme) || 'blue';
   });
   const [user, setUser] = useState<any>(null);
   const [bodyProfile, setBodyProfile] = useState<any>(() => {
@@ -172,7 +172,7 @@ const App: React.FC = () => {
   }
 
   return (
-    <div className={`flex min-h-screen w-full bg-gradient-to-br transition-colors duration-700 ${theme === 'pink' ? 'from-white via-rose-50 to-pink-100 text-black' : 'from-[#0a192f] via-[#0f172a] to-[#0a192f] text-white'}`}>
+    <div className="flex min-h-screen w-full bg-[#010101] text-white transition-colors duration-700">
       
       <Navigation 
         currentView={currentView} 
@@ -184,17 +184,17 @@ const App: React.FC = () => {
       <main className="flex-1 overflow-y-auto w-full">
 
         {/* Mobile header */}
-        <div className="md:hidden flex justify-between items-center p-4">
-          <h1 className="text-xl font-bold">Genfit</h1>
+        <div className="md:hidden flex justify-between items-center p-4 border-b border-white/10">
+          <h1 className="text-xl font-bold">GenFit.</h1>
           <button onClick={() => setIsMobileMenuOpen(true)}>
             <Menu className="w-6 h-6" />
           </button>
         </div>
 
         {isMobileMenuOpen && (
-          <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm p-6">
+          <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-md p-6">
             <button onClick={() => setIsMobileMenuOpen(false)}>
-              <X className={`w-8 h-8 ${theme === 'pink' ? 'text-black' : 'text-white'}`} />
+              <X className="w-8 h-8 text-white" />
             </button>
           </div>
         )}
