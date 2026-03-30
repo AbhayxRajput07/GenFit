@@ -25,3 +25,6 @@ dist-ssr
 .env.local
 .env
 genfit-backend/.env
+
+.vercel
+.env*.local
