@@ -17,13 +17,15 @@ interface SettingsProps {
     setView: (v: ViewState) => void;
 }
 
-const Settings: React.FC<SettingsProps> = ({ user, setTheme, setView }) => {
+const Settings: React.FC<SettingsProps> = ({ user, theme, setTheme, setView }) => {
     const [activeTab, setActiveTab] = useState<string | null>(null);
     const { language, setLanguage, t } = useLanguage();
     const handleLogout = async () => { await logoutUser(); setView(ViewState.DASHBOARD); };
+    const isPink = theme === 'pink';
 
     const themes: { id: Theme; label: string; gradient: string; desc: string }[] = [
-        { id: 'blue', label: 'Dark AI Premium', gradient: 'from-blue-500 to-cyan-500', desc: 'Default cinematic aesthetic' },
+        { id: 'pink', label: 'Baby Pink', gradient: 'from-rose-300 to-pink-400', desc: 'Light & warm' },
+        { id: 'blue', label: 'Futuristic Blue', gradient: 'from-blue-500 to-cyan-500', desc: 'Navy & sea blue' },
     ];
 
     const settingsItems = [
@@ -243,10 +245,10 @@ const Settings: React.FC<SettingsProps> = ({ user, setTheme, setView }) => {
     };
 
     return (
-        <div className="w-full min-h-screen bg-[#010101] text-white px-4 md:px-8 lg:px-12 py-8 md:py-12 overflow-x-hidden selection:bg-blue-500/30 pb-20">
+        <div className={`w-full min-h-screen px-4 md:px-8 lg:px-12 py-8 md:py-12 overflow-x-hidden pb-20 ${isPink ? 'bg-[#f6edf2] text-[#1f2a44] selection:bg-pink-200/70' : 'bg-[#010101] text-white selection:bg-blue-500/30'}`}>
             {/* ── Ambient Glow ── */}
-            <div className="fixed top-[-20%] right-[-10%] w-[50vw] h-[50vw] bg-blue-600/10 blur-[150px] rounded-full pointer-events-none" />
-            <div className="fixed bottom-[-10%] left-[-10%] w-[40vw] h-[40vw] bg-sky-600/5 blur-[150px] rounded-full pointer-events-none" />
+            <div className={`fixed top-[-20%] right-[-10%] w-[50vw] h-[50vw] blur-[150px] rounded-full pointer-events-none ${isPink ? 'bg-pink-300/25' : 'bg-blue-600/10'}`} />
+            <div className={`fixed bottom-[-10%] left-[-10%] w-[40vw] h-[40vw] blur-[150px] rounded-full pointer-events-none ${isPink ? 'bg-rose-300/20' : 'bg-sky-600/5'}`} />
 
             <div className="max-w-6xl mx-auto relative z-10">
                 <AnimatePresence mode="wait">
@@ -254,71 +256,73 @@ const Settings: React.FC<SettingsProps> = ({ user, setTheme, setView }) => {
                         <motion.div key="main" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="space-y-10">
                             <div className="flex justify-between items-end mb-4">
                                 <div className="flex items-center gap-4">
-                                    <div className="p-3 rounded-2xl bg-[#030303] border border-white/10 shadow-lg hidden md:block">
-                                        <SettingsIcon size={24} className="text-white" />
+                                    <div className={`p-3 rounded-2xl shadow-lg hidden md:block ${isPink ? 'bg-white border border-pink-200/80' : 'bg-[#030303] border border-white/10'}`}>
+                                        <SettingsIcon size={24} className={isPink ? 'text-pink-500' : 'text-white'} />
                                     </div>
                                     <div>
-                                        <h2 className="text-4xl md:text-5xl font-medium tracking-tight text-white mb-2">{t('settings.title')}</h2>
-                                        <p className="text-sm font-light tracking-wide text-white/50">{t('settings.subtitle')}</p>
+                                        <h2 className={`text-4xl md:text-5xl font-medium tracking-tight mb-2 ${isPink ? 'text-black' : 'text-white'}`}>{t('settings.title')}</h2>
+                                        <p className={`text-sm font-light tracking-wide ${isPink ? 'text-[#5f6d87]' : 'text-white/50'}`}>{t('settings.subtitle')}</p>
                                     </div>
                                 </div>
-                                <div className="hidden lg:flex items-center gap-3 px-4 py-2.5 rounded-xl border border-emerald-500/20 bg-emerald-500/5 shadow-[0_0_15px_rgba(16,185,129,0.05)]">
-                                    <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_8px_rgba(52,211,153,0.8)]" />
-                                    <span className="text-[10px] font-bold uppercase tracking-widest text-emerald-400/80">System Live</span>
+                                <div className={`hidden lg:flex items-center gap-3 px-4 py-2.5 rounded-xl border ${isPink ? 'border-pink-200/80 bg-white' : 'border-emerald-500/20 bg-emerald-500/5 shadow-[0_0_15px_rgba(16,185,129,0.05)]'}`}>
+                                    <div className={`w-2 h-2 rounded-full ${isPink ? 'bg-pink-400' : 'bg-emerald-400 animate-pulse shadow-[0_0_8px_rgba(52,211,153,0.8)]'}`} />
+                                    <span className={`text-[10px] font-bold uppercase tracking-widest ${isPink ? 'text-[#8c98ae]' : 'text-emerald-400/80'}`}>System Live</span>
                                 </div>
                             </div>
 
                             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                                 <div className="lg:col-span-2 space-y-8">
                                     {/* Theme Picker */}
-                                    <div className="p-8 md:p-10 rounded-[2.5rem] shadow-2xl border border-white/5 bg-[#030303] relative overflow-hidden">
-                                        <div className="absolute top-0 right-0 p-10 opacity-5 pointer-events-none">
+                                    <div className={`p-8 md:p-10 rounded-[2.5rem] shadow-2xl border relative overflow-hidden ${isPink ? 'bg-white border-[#e8d4dd] shadow-[0_12px_28px_rgba(225,178,199,0.2)]' : 'border-white/5 bg-[#030303]'}`}>
+                                        <div className={`absolute top-0 right-0 p-10 pointer-events-none ${isPink ? 'opacity-10 text-pink-300' : 'opacity-5'}`}>
                                             <Palette size={120} />
                                         </div>
-                                        <h3 className="font-medium tracking-tight flex items-center gap-3 mb-8 text-2xl text-white relative z-10">
-                                            <Palette className="text-blue-400" size={24} /> Application Aesthetics
+                                        <h3 className={`font-medium tracking-tight flex items-center gap-3 mb-8 text-2xl relative z-10 ${isPink ? 'text-black' : 'text-white'}`}>
+                                            <Palette className={isPink ? 'text-pink-500' : 'text-blue-400'} size={24} /> App Theme
                                         </h3>
                                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 relative z-10">
                                             {themes.map(th => (
-                                                <div key={th.id} className="p-6 rounded-[1.5rem] border-2 transition-all flex flex-col items-center gap-4 relative border-blue-500/50 bg-blue-500/10 shadow-[0_0_30px_rgba(59,130,246,0.15)] cursor-default">
-                                                    <div className="absolute top-3 right-3 w-6 h-6 rounded-full flex items-center justify-center bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.5)]">
-                                                        <Check className="w-3.5 h-3.5 text-white" />
-                                                    </div>
-                                                    <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-600 to-sky-400 shadow-[0_0_20px_rgba(56,189,248,0.3)] border-2 border-white/20"></div>
+                                                <button
+                                                    key={th.id}
+                                                    onClick={() => setTheme(th.id)}
+                                                    className={`p-6 rounded-[1.5rem] border-2 transition-all flex flex-col items-center gap-4 relative text-left ${theme === th.id
+                                                        ? th.id === 'pink'
+                                                            ? (isPink ? 'border-pink-400 bg-pink-50 shadow-[0_10px_22px_rgba(236,72,153,0.15)]' : 'border-rose-300/50 bg-rose-300/10 shadow-[0_0_30px_rgba(244,114,182,0.15)]')
+                                                            : 'border-blue-500/50 bg-blue-500/10 shadow-[0_0_30px_rgba(59,130,246,0.15)]'
+                                                        : (isPink ? 'border-[#e8d4dd] bg-white hover:border-pink-200 hover:bg-pink-50' : 'border-white/10 bg-[#050505] hover:border-white/20 hover:bg-white/[0.03]')
+                                                    }`}
+                                                >
+                                                    {theme === th.id && (
+                                                        <div className={`absolute top-3 right-3 w-6 h-6 rounded-full flex items-center justify-center ${th.id === 'pink' ? 'bg-rose-400 shadow-[0_0_10px_rgba(244,114,182,0.5)]' : (isPink ? 'bg-blue-500 shadow-none' : 'bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.5)]')}`}>
+                                                            <Check className="w-3.5 h-3.5 text-white" />
+                                                        </div>
+                                                    )}
+                                                    <div className={`w-16 h-16 rounded-full bg-gradient-to-br ${th.gradient} ${th.id === 'pink' ? 'shadow-[0_0_20px_rgba(244,114,182,0.3)]' : 'shadow-[0_0_20px_rgba(56,189,248,0.3)]'} border-2 border-white/20`}></div>
                                                     <div className="text-center">
-                                                        <span className="font-bold text-white block mb-1 tracking-wide">{th.label}</span>
-                                                        <span className="text-[10px] uppercase font-bold tracking-widest text-white/50">{th.desc}</span>
+                                                        <span className={`font-bold block mb-1 tracking-wide ${isPink ? 'text-black' : 'text-white'}`}>{th.label}</span>
+                                                        <span className={`text-[10px] uppercase font-bold tracking-widest ${isPink ? 'text-[#7f8ca3]' : (theme === th.id ? 'text-white/70' : 'text-white/50')}`}>{th.desc}</span>
                                                     </div>
-                                                </div>
+                                                </button>
                                             ))}
-                                            
-                                            {/* Disabled Light Theme Placeholders to signify transition */}
-                                            <div className="p-6 rounded-[1.5rem] border border-white/5 bg-[#050505] flex flex-col items-center gap-4 opacity-40 cursor-not-allowed">
-                                                <div className="w-16 h-16 rounded-full bg-slate-100 border-2 border-white/5"></div>
-                                                <div className="text-center">
-                                                    <span className="font-medium text-white block mb-1 tracking-wide line-through decoration-white/30">Rose Quartz</span>
-                                                    <span className="text-[9px] uppercase font-bold tracking-widest text-white/30">Deprecated</span>
-                                                </div>
-                                            </div>
                                         </div>
                                     </div>
 
                                     {/* Settings List */}
-                                    <div className="p-6 md:p-8 rounded-[2.5rem] shadow-2xl border border-white/5 bg-[#030303] space-y-2">
+                                    <div className={`p-6 md:p-8 rounded-[2.5rem] shadow-2xl border space-y-2 ${isPink ? 'bg-white border-[#e8d4dd] shadow-[0_12px_28px_rgba(225,178,199,0.2)]' : 'border-white/5 bg-[#030303]'}`}>
                                         {settingsItems.map((item, idx) => {
                                             const Icon = item.icon;
                                             return (
-                                                <button key={idx} onClick={() => setActiveTab(item.id)} className="w-full group flex items-center justify-between p-5 rounded-[1.5rem] transition-all hover:bg-white/[0.03] hover:border-white/10 border border-transparent">
+                                                <button key={idx} onClick={() => setActiveTab(item.id)} className={`w-full group flex items-center justify-between p-5 rounded-[1.5rem] transition-all border border-transparent ${isPink ? 'hover:bg-pink-50 hover:border-pink-100' : 'hover:bg-white/[0.03] hover:border-white/10'}`}>
                                                     <div className="flex items-center gap-5">
-                                                        <div className="p-3.5 rounded-xl transition-all border border-white/5 bg-[#050505] group-hover:bg-blue-500/10 group-hover:border-blue-500/30 group-hover:text-blue-400 text-white/70 shadow-lg">
+                                                        <div className={`p-3.5 rounded-xl transition-all border shadow-lg ${isPink ? 'border-pink-100 bg-pink-50 group-hover:bg-pink-100 group-hover:border-pink-200 group-hover:text-pink-500 text-pink-400' : 'border-white/5 bg-[#050505] group-hover:bg-blue-500/10 group-hover:border-blue-500/30 group-hover:text-blue-400 text-white/70'}`}>
                                                             <Icon size={20} />
                                                         </div>
                                                         <div className="text-left">
-                                                            <span className="font-medium tracking-wide block text-lg text-white mb-0.5">{item.label}</span>
-                                                            <span className="text-[11px] font-bold text-white/30 uppercase tracking-widest">{item.desc}</span>
+                                                            <span className={`font-medium tracking-wide block text-lg mb-0.5 ${isPink ? 'text-black' : 'text-white'}`}>{item.label}</span>
+                                                            <span className={`text-[11px] font-bold uppercase tracking-widest ${isPink ? 'text-[#9aa7bd]' : 'text-white/30'}`}>{item.desc}</span>
                                                         </div>
                                                     </div>
-                                                    <ChevronRight className="transition-transform group-hover:translate-x-1 text-white/20 group-hover:text-white/60" size={20} />
+                                                    <ChevronRight className={`transition-transform group-hover:translate-x-1 ${isPink ? 'text-[#9aa7bd] group-hover:text-[#7f8ca3]' : 'text-white/20 group-hover:text-white/60'}`} size={20} />
                                                 </button>
                                             );
                                         })}
@@ -327,41 +331,41 @@ const Settings: React.FC<SettingsProps> = ({ user, setTheme, setView }) => {
 
                                 {/* Account Panel */}
                                 <div className="space-y-8">
-                                    <div className="p-10 rounded-[2.5rem] shadow-2xl border border-white/5 flex flex-col items-center text-center bg-[#030303] relative overflow-hidden group">
-                                        <div className="absolute inset-0 bg-blue-500/5 opacity-0 group-hover:opacity-100 transition-opacity blur-2xl pointer-events-none" />
+                                    <div className={`p-10 rounded-[2.5rem] shadow-2xl border flex flex-col items-center text-center relative overflow-hidden group ${isPink ? 'bg-white border-[#e8d4dd] shadow-[0_12px_28px_rgba(225,178,199,0.2)]' : 'border-white/5 bg-[#030303]'}`}>
+                                        <div className={`absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity blur-2xl pointer-events-none ${isPink ? 'bg-pink-300/15' : 'bg-blue-500/5'}`} />
                                         <div className="relative z-10 w-full flex flex-col items-center">
-                                            <div className="w-28 h-28 rounded-full mb-6 overflow-hidden p-1.5 bg-[#050505] border border-white/10 shadow-[0_0_30px_rgba(0,0,0,0.5)]">
-                                                <div className="w-full h-full rounded-full overflow-hidden bg-[#030303] border border-white/10">
+                                            <div className={`w-28 h-28 rounded-full mb-6 overflow-hidden p-1.5 border shadow-[0_0_30px_rgba(0,0,0,0.08)] ${isPink ? 'bg-pink-50 border-pink-200/80' : 'bg-[#050505] border-white/10 shadow-[0_0_30px_rgba(0,0,0,0.5)]'}`}>
+                                                <div className={`w-full h-full rounded-full overflow-hidden border ${isPink ? 'bg-white border-pink-200/70' : 'bg-[#030303] border-white/10'}`}>
                                                     {user ? (
                                                         <img src={`https://api.dicebear.com/7.x/fun-emoji/svg?seed=${user?.name || user?.email || 'user'}`} alt="avatar" className="w-full h-full object-cover filter saturate-150" />
                                                     ) : (
-                                                        <User className="w-full h-full p-6 text-white/20" />
+                                                        <User className={`w-full h-full p-6 ${isPink ? 'text-pink-300' : 'text-white/20'}`} />
                                                     )}
                                                 </div>
                                             </div>
-                                            <h3 className="text-2xl font-medium tracking-tight text-white mb-1">{user ? user.displayName || "GenFit User" : "Offline"}</h3>
-                                            {user && <p className="text-xs font-light tracking-widest text-white/40 mb-8">{user.email}</p>}
+                                            <h3 className={`text-2xl font-medium tracking-tight mb-1 ${isPink ? 'text-black' : 'text-white'}`}>{user ? user.displayName || "GenFit User" : "Offline"}</h3>
+                                            {user && <p className={`text-xs font-light tracking-widest mb-8 ${isPink ? 'text-[#6f7e98]' : 'text-white/40'}`}>{user.email}</p>}
                                             {user && (
                                                 <button onClick={handleLogout}
-                                                    className="w-full py-4 rounded-[1.5rem] font-bold text-[11px] uppercase tracking-widest flex items-center justify-center gap-3 transition-all border border-rose-500/20 bg-rose-500/5 text-rose-400 hover:bg-rose-500 hover:text-white hover:shadow-[0_0_20px_rgba(244,63,94,0.3)] active:scale-95">
-                                                    <LogOut className="w-4 h-4" /> Disconnect
+                                                    className={`w-full py-4 rounded-[1.5rem] font-bold text-[11px] uppercase tracking-widest flex items-center justify-center gap-3 transition-all active:scale-95 ${isPink ? 'border border-rose-200 bg-rose-50 text-rose-500 hover:bg-rose-500 hover:text-white' : 'border border-rose-500/20 bg-rose-500/5 text-rose-400 hover:bg-rose-500 hover:text-white hover:shadow-[0_0_20px_rgba(244,63,94,0.3)]'}`}>
+                                                    <LogOut className="w-4 h-4" /> Sign Out
                                                 </button>
                                             )}
                                         </div>
                                     </div>
                                     
-                                    <div className="p-8 rounded-[2.5rem] shadow-[0_0_40px_rgba(59,130,246,0.15)] border border-blue-400/30 bg-gradient-to-br from-blue-900/40 to-[#030303] text-white relative overflow-hidden">
-                                        <div className="absolute top-0 right-0 w-32 h-32 bg-sky-500/20 blur-3xl rounded-full" />
+                                    <div className={`p-8 rounded-[2.5rem] border text-white relative overflow-hidden ${isPink ? 'shadow-[0_12px_30px_rgba(236,72,153,0.25)] border-pink-300/50 bg-gradient-to-br from-pink-500 to-rose-500' : 'shadow-[0_0_40px_rgba(59,130,246,0.15)] border-blue-400/30 bg-gradient-to-br from-blue-900/40 to-[#030303]'}`}>
+                                        <div className={`absolute top-0 right-0 w-32 h-32 blur-3xl rounded-full ${isPink ? 'bg-pink-200/35' : 'bg-sky-500/20'}`} />
                                         <div className="relative z-10">
                                             <div className="flex items-center gap-2 mb-3">
                                                 <Crown size={20} className="text-amber-400" />
-                                                <h4 className="font-bold text-xl tracking-tight text-white">GenFit <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-200 to-yellow-500">PRO</span></h4>
+                                                <h4 className="font-bold text-xl tracking-tight text-white">GenFit <span className={isPink ? 'text-white/90' : 'text-transparent bg-clip-text bg-gradient-to-r from-amber-200 to-yellow-500'}>PRO</span></h4>
                                             </div>
-                                            <p className="text-[13px] font-light text-white/60 mb-6 leading-relaxed">
+                                            <p className={`text-[13px] font-light mb-6 leading-relaxed ${isPink ? 'text-white/90' : 'text-white/60'}`}>
                                                 Unlock maximum biometric analysis and unrestricted AI coaching capabilities.
                                             </p>
-                                            <button className="w-full py-3.5 rounded-xl bg-white text-black font-bold text-[11px] uppercase tracking-widest shadow-[0_0_20px_rgba(255,255,255,0.2)] active:scale-95 transition-all hover:bg-gray-100">
-                                                Initiate Upgrade
+                                            <button className={`w-full py-3.5 rounded-xl font-bold text-[11px] uppercase tracking-widest active:scale-95 transition-all ${isPink ? 'bg-white text-black shadow-[0_8px_20px_rgba(0,0,0,0.2)] hover:bg-pink-50' : 'bg-white text-black shadow-[0_0_20px_rgba(255,255,255,0.2)] hover:bg-gray-100'}`}>
+                                                Upgrade Now
                                             </button>
                                         </div>
                                     </div>

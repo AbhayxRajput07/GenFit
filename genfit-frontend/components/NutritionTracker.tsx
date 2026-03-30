@@ -176,10 +176,10 @@ const NutritionTracker: React.FC<NutritionTrackerProps> = ({ addNutrition, histo
   const progressWidth = (value: number, target: number) => `${Math.min((value / Math.max(target, 1)) * 100, 100)}%`;
 
   return (
-    <div className="w-full min-h-screen bg-[#010101] text-white px-4 md:px-8 lg:px-12 py-8 md:py-12 overflow-x-hidden selection:bg-emerald-500/30">
+    <div className="w-full min-h-screen bg-[#06142d] text-white px-4 md:px-8 lg:px-12 py-8 md:py-12 overflow-x-hidden selection:bg-blue-500/30">
       
       {/* Ambient Glow */}
-      <div className="fixed top-[10%] right-[-10%] w-[50vw] h-[50vw] bg-emerald-600/10 blur-[150px] rounded-full pointer-events-none" />
+      <div className="fixed top-[10%] right-[-10%] w-[50vw] h-[50vw] bg-blue-600/15 blur-[150px] rounded-full pointer-events-none" />
 
       <div className="relative w-full max-w-[1400px] mx-auto flex flex-col gap-8 md:gap-10">
         
@@ -187,15 +187,15 @@ const NutritionTracker: React.FC<NutritionTrackerProps> = ({ addNutrition, histo
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 relative z-10">
           <div>
             <div className="flex items-center gap-4 mb-2">
-              <div className="p-3 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 shadow-[0_0_20px_rgba(16,185,129,0.2)]">
-                <Utensils size={28} className="text-emerald-400" />
+              <div className="p-3 rounded-2xl bg-blue-500/10 border border-blue-500/30 shadow-[0_0_20px_rgba(59,130,246,0.2)]">
+                <Utensils size={28} className="text-blue-300" />
               </div>
               <h1 className="text-5xl lg:text-6xl font-medium tracking-tighter text-white">Nutrition</h1>
             </div>
             <p className="text-sm font-light text-white/50 tracking-wide ml-[72px]">Advanced AI-driven meal scanning & metabolic tracking.</p>
           </div>
           
-          <button className="flex items-center gap-2 text-xs font-bold tracking-widest text-emerald-400 hover:text-white hover:bg-white/10 transition-all px-5 py-3 rounded-xl border border-white/10 bg-white/5 uppercase">
+          <button className="flex items-center gap-2 text-xs font-bold tracking-widest text-blue-300 hover:text-white hover:bg-white/10 transition-all px-5 py-3 rounded-xl border border-blue-400/30 bg-blue-500/5 uppercase">
             <Sparkles size={16} /> Re-check Base
           </button>
         </motion.div>
@@ -204,7 +204,7 @@ const NutritionTracker: React.FC<NutritionTrackerProps> = ({ addNutrition, histo
         <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="grid grid-cols-2 md:grid-cols-4 gap-4 relative z-10">
           {[
             { label: 'Calories', val: totals.kcal, target: targets.calories, unit: 'kcal', color: 'text-white' },
-            { label: 'Protein', val: totals.protein, target: '30% intake', unit: 'g', color: 'text-emerald-400' },
+            { label: 'Protein', val: totals.protein, target: '30% intake', unit: 'g', color: 'text-blue-300' },
             { label: 'Carbs', val: totals.carbs, target: '40% intake', unit: 'g', color: 'text-sky-400' },
             { label: 'Fats', val: totals.fats, target: '30% intake', unit: 'g', color: 'text-amber-400' },
           ].map((m, i) => (
@@ -224,22 +224,22 @@ const NutritionTracker: React.FC<NutritionTrackerProps> = ({ addNutrition, histo
           {/* LEFT: Scan & Upload Section */}
           <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }} className="lg:col-span-2 space-y-8">
             
-            <div className="p-8 rounded-[2.5rem] bg-[#030303] border border-white/5 shadow-2xl relative overflow-hidden">
+            <div className="p-8 rounded-[2.5rem] bg-[#071733] border border-blue-300/10 shadow-2xl relative overflow-hidden">
               <div className="mb-8 flex items-center justify-between">
                 <div>
-                  <p className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest mb-1">Optical Recognition</p>
+                  <p className="text-[10px] font-bold text-blue-300 uppercase tracking-widest mb-1">Optical Recognition</p>
                   <h3 className="text-3xl font-medium tracking-tight text-white">Meal Scan</h3>
                 </div>
-                <div className="px-4 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-[10px] font-bold tracking-widest uppercase">Live AI</div>
+                <div className="px-4 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/30 text-blue-300 text-[10px] font-bold tracking-widest uppercase">Live AI</div>
               </div>
 
               <button
                 onClick={() => fileInputRef.current?.click()}
-                className="w-full mb-6 p-6 rounded-3xl border border-white/10 bg-white/[0.02] hover:bg-white/[0.05] hover:border-emerald-500/30 hover:shadow-[0_0_30px_rgba(16,185,129,0.1)] transition-all text-left group"
+                className="w-full mb-6 p-6 rounded-3xl border border-white/10 bg-white/[0.02] hover:bg-white/[0.05] hover:border-blue-500/30 hover:shadow-[0_0_30px_rgba(59,130,246,0.15)] transition-all text-left group"
               >
                 <div className="flex items-center gap-5">
-                  <div className="p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 group-hover:scale-110 transition-transform">
-                    <Camera size={28} className="text-emerald-400" />
+                  <div className="p-4 rounded-2xl bg-blue-500/10 border border-blue-500/20 group-hover:scale-110 transition-transform">
+                    <Camera size={28} className="text-blue-300" />
                   </div>
                   <div>
                     <p className="text-xl font-bold text-white tracking-tight">Capture Meal Image</p>
@@ -252,7 +252,7 @@ const NutritionTracker: React.FC<NutritionTrackerProps> = ({ addNutrition, histo
                 <input
                   value={input} onChange={(e) => setInput(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && handleLogMeal()}
                   placeholder="Or manually describe your meal..."
-                  className="flex-1 px-6 py-5 bg-[#050505] text-white rounded-2xl outline-none border border-white/10 focus:border-emerald-500/50 focus:bg-white/[0.05] transition-all font-medium text-sm placeholder-white/20"
+                  className="flex-1 px-6 py-5 bg-[#050505] text-white rounded-2xl outline-none border border-white/10 focus:border-blue-500/50 focus:bg-white/[0.05] transition-all font-medium text-sm placeholder-white/20"
                 />
                 <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleImageInput} />
                 <button
@@ -263,7 +263,7 @@ const NutritionTracker: React.FC<NutritionTrackerProps> = ({ addNutrition, histo
                 </button>
                 <button
                   onClick={handleLogMeal} disabled={isAnalyzing}
-                  className="bg-gradient-to-r from-emerald-500 to-teal-600 text-white px-8 py-5 rounded-2xl font-bold tracking-widest uppercase text-sm flex items-center justify-center gap-3 transition-all disabled:opacity-50 disabled:grayscale hover:shadow-[0_0_30px_rgba(16,185,129,0.4)] active:scale-95 border border-emerald-400/50 min-w-[180px]"
+                  className="bg-gradient-to-r from-blue-500 to-cyan-500 text-white px-8 py-5 rounded-2xl font-bold tracking-widest uppercase text-sm flex items-center justify-center gap-3 transition-all disabled:opacity-50 disabled:grayscale hover:shadow-[0_0_30px_rgba(59,130,246,0.45)] active:scale-95 border border-blue-400/50 min-w-[180px]"
                 >
                   {isAnalyzing ? <Camera size={18} className="animate-pulse" /> : <ImagePlus size={18} />}
                   {isAnalyzing ? 'Extracting...' : 'Log Meal'}
@@ -282,11 +282,11 @@ const NutritionTracker: React.FC<NutritionTrackerProps> = ({ addNutrition, histo
               </AnimatePresence>
 
               {error && <p className="mt-4 text-xs tracking-wide text-rose-400 font-bold flex items-center gap-2 px-4 py-3 rounded-xl bg-rose-500/10 border border-rose-500/20"><AlertCircle size={16} /> {error}</p>}
-              {success && <p className="mt-4 text-xs tracking-wide text-emerald-400 font-bold flex items-center gap-2 px-4 py-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20"><CheckCircle2 size={16} /> {success}</p>}
+              {success && <p className="mt-4 text-xs tracking-wide text-blue-300 font-bold flex items-center gap-2 px-4 py-3 rounded-xl bg-blue-500/10 border border-blue-500/20"><CheckCircle2 size={16} /> {success}</p>}
             </div>
 
             {/* Hydration Interface */}
-            <div className="p-8 rounded-[2.5rem] bg-[#030303] border border-white/5 shadow-2xl relative overflow-hidden group">
+            <div className="p-8 rounded-[2.5rem] bg-[#071733] border border-blue-300/10 shadow-2xl relative overflow-hidden group">
               <div className="absolute inset-0 bg-blue-500/5 blur-3xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
               
               <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
@@ -314,12 +314,12 @@ const NutritionTracker: React.FC<NutritionTrackerProps> = ({ addNutrition, histo
           {/* RIGHT: Selected Meal Details & Snapshot */}
           <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="space-y-8">
             
-            <div className="p-8 rounded-[2.5rem] bg-[#030303] border border-white/5 shadow-2xl overflow-hidden">
+            <div className="p-8 rounded-[2.5rem] bg-[#071733] border border-blue-300/10 shadow-2xl overflow-hidden">
               <h4 className="text-xl font-medium tracking-tight text-white mb-6 flex items-center gap-3">
-                <Heart size={20} className="text-rose-400" /> Biometric Impact
+                <Heart size={20} className="text-blue-300" /> Biometric Impact
               </h4>
               <div className="flex flex-col gap-8 pb-3">
-                <MetricRing value={proteinBalance} color="#34d399" glowColor="rgba(52,211,153,0.5)" label="Protein Synthesis" size={140} />
+                <MetricRing value={proteinBalance} color="#60a5fa" glowColor="rgba(96,165,250,0.5)" label="Protein Synthesis" size={140} />
                 <div className="grid grid-cols-2 gap-4">
                   <MetricRing value={carbBalance} color="#38bdf8" glowColor="rgba(56,189,248,0.5)" label="Glycogen" size={100} />
                   <MetricRing value={hydrationBalance} color="#818cf8" glowColor="rgba(129,140,248,0.5)" label="Hydration" size={100} />
@@ -327,7 +327,7 @@ const NutritionTracker: React.FC<NutritionTrackerProps> = ({ addNutrition, histo
               </div>
             </div>
 
-            <div className="p-8 rounded-[2.5rem] bg-[#030303] border border-white/5 shadow-2xl">
+            <div className="p-8 rounded-[2.5rem] bg-[#071733] border border-blue-300/10 shadow-2xl">
               <div className="flex flex-wrap gap-2 mb-6">
                 {mealTabs.length === 0 ? (
                   <span className="text-[10px] font-bold tracking-widest uppercase text-white/30">No scans available.</span>
@@ -336,7 +336,7 @@ const NutritionTracker: React.FC<NutritionTrackerProps> = ({ addNutrition, histo
                     <button
                       key={mealName} onClick={() => setSelectedMealTab(mealName)}
                       className={`px-4 py-2 rounded-xl text-[10px] font-bold tracking-widest uppercase border transition-all ${
-                        selectedMealTab === mealName ? 'bg-emerald-500/10 border-emerald-500/40 text-emerald-300' : 'bg-transparent border-white/10 text-white/40 hover:text-white hover:bg-white/5'
+                        selectedMealTab === mealName ? 'bg-blue-500/10 border-blue-500/40 text-blue-300' : 'bg-transparent border-white/10 text-white/40 hover:text-white hover:bg-white/5'
                       }`}
                     >
                       {mealName.substring(0, 15)}
@@ -366,9 +366,9 @@ const NutritionTracker: React.FC<NutritionTrackerProps> = ({ addNutrition, histo
                   <div className="grid grid-cols-2 gap-3 mb-6">
                     {[
                       { l: 'Calories', v: selectedMeal.calories, u: '', c: 'text-white' },
-                      { l: 'Protein', v: selectedMeal.protein, u: 'g', c: 'text-emerald-400' },
+                      { l: 'Protein', v: selectedMeal.protein, u: 'g', c: 'text-blue-300' },
                       { l: 'Carbs', v: selectedMeal.carbs, u: 'g', c: 'text-sky-400' },
-                      { l: 'Fats', v: selectedMeal.fats, u: 'g', c: 'text-amber-400' },
+                      { l: 'Fats', v: selectedMeal.fats, u: 'g', c: 'text-indigo-300' },
                     ].map(st => (
                       <div key={st.l} className="rounded-xl border border-white/5 bg-[#030303] p-3 text-center">
                         <p className="text-[9px] uppercase tracking-widest text-white/30 font-bold mb-1">{st.l}</p>

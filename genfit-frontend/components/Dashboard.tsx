@@ -61,7 +61,7 @@ const CircleRing: React.FC<{ pct: number; size?: number; strokeWidth?: number; c
   );
 };
 
-/* ─── Premium Deep Navy Metric Card ───────────────────────────────────────────────── */
+/* --- Premium Deep Navy Metric Card ------------------------------------------------ */
 interface MetricProps {
   label: string;
   value: string;
@@ -79,7 +79,6 @@ const PremiumMetricCard: React.FC<MetricProps> = ({ label, value, unit, pct, Ico
     whileHover={{ y: -4, transition: { duration: 0.2 } }}
     className="group relative p-7 rounded-[2rem] border border-white/5 bg-[#030303] hover:bg-[#050505] transition-all duration-500 overflow-hidden shadow-2xl flex flex-col justify-between"
   >
-    {/* Hover Glow */}
     <div className={`absolute -inset-0.5 bg-gradient-to-br ${baseColor} opacity-0 group-hover:opacity-10 transition-opacity duration-700 blur-2xl`} />
 
     <div className="relative z-10 flex items-center justify-between mb-6">
@@ -91,26 +90,24 @@ const PremiumMetricCard: React.FC<MetricProps> = ({ label, value, unit, pct, Ico
       </div>
       <p className="text-sm font-bold text-white/40">{Math.round(pct)}%</p>
     </div>
-    
+
     <div className="relative z-10 flex items-end justify-between">
       <div>
         <span className="text-4xl font-bold tracking-tighter text-white">{value}</span>
         <span className="ml-1.5 flex-1 text-sm font-medium text-white/50">{unit}</span>
       </div>
-      
-      {/* Clean elegant mini progress ring */}
+
       <div className="relative flex items-center justify-center w-10 h-10">
-         <CircleRing pct={pct} size={40} strokeWidth={4} color={ringColor} bgStroke="rgba(255,255,255,0.05)" dropShadow={`drop-shadow(0 0 8px ${ringColor}80)`} />
+        <CircleRing pct={pct} size={40} strokeWidth={4} color={ringColor} bgStroke="rgba(255,255,255,0.05)" dropShadow={`drop-shadow(0 0 8px ${ringColor}80)`} />
       </div>
     </div>
-    
+
   </motion.div>
 );
 
 const Dashboard: React.FC<DashboardProps> = ({ stats, activities, nutrition }) => {
   const today = new Date().toDateString();
   const todayActivities = activities.filter(a => new Date(a.timestamp).toDateString() === today);
-  const totalBurn = todayActivities.reduce((s, a) => s + a.caloriesBurned, 0);
   const todayCalories = nutrition.filter(n => new Date(n.timestamp ?? Date.now()).toDateString() === today)
     .reduce((s, n) => s + n.calories, 0);
 
@@ -134,39 +131,34 @@ const Dashboard: React.FC<DashboardProps> = ({ stats, activities, nutrition }) =
 
   return (
     <div className="w-full min-h-screen bg-[#010101] text-white px-4 md:px-8 lg:px-12 py-8 md:py-12 overflow-x-hidden selection:bg-blue-500/30">
-      
-      {/* Ambient Dashboard Background Glow */}
       <div className="fixed top-[-20%] right-[-10%] w-[50vw] h-[50vw] bg-blue-600/10 blur-[150px] rounded-full pointer-events-none" />
 
       <div className="relative w-full max-w-[1400px] mx-auto flex flex-col gap-8 md:gap-10">
-        
-        {/* HERO SECTION */}
         <section className="flex flex-col xl:flex-row xl:items-end justify-between gap-8 mb-4 relative z-10">
           <div className="flex-1">
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}
               className="inline-flex items-center gap-3 px-4 py-1.5 rounded-full mb-6 border border-cyan-500/30 bg-cyan-500/10 shadow-[0_0_20px_rgba(6,182,212,0.2)]"
             >
               <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_10px_#22d3ee]" />
               <span className="text-[10px] font-bold tracking-[0.2em] text-cyan-300 uppercase">Live Sync Active</span>
             </motion.div>
-            
-            <motion.h1 
+
+            <motion.h1
               initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.1 }}
               className="text-5xl md:text-6xl lg:text-[70px] font-medium tracking-tighter mb-4 text-white drop-shadow-xl"
             >
               {getGreeting()}, <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-sky-500">Abhay</span>
             </motion.h1>
-            <motion.p 
+            <motion.p
               initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1, delay: 0.3 }}
               className="text-lg font-light max-w-2xl text-white/50 tracking-wide"
             >
               Neural synchronization complete. Here's your master dashboard overview.
             </motion.p>
           </div>
-          
-          {/* AI Insight Pill */}
-          <motion.div 
+
+          <motion.div
             initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.8, delay: 0.4 }}
             className="w-full xl:w-[450px] p-6 rounded-3xl border border-white/10 bg-[#050505]/80 backdrop-blur-xl flex gap-5 items-start shadow-2xl group"
           >
@@ -180,25 +172,20 @@ const Dashboard: React.FC<DashboardProps> = ({ stats, activities, nutrition }) =
           </motion.div>
         </section>
 
-        {/* METRICS ROW */}
         <motion.section variants={containerVariants} initial="hidden" animate="visible" className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 relative z-10">
-          {/* Overall Health Score */}
           <motion.div
             variants={itemVariants}
             whileHover={{ y: -4, transition: { duration: 0.2 } }}
             className="group p-7 rounded-[2rem] border border-white/5 bg-gradient-to-br from-[#050505] to-[#020202] flex flex-col justify-center items-center relative overflow-hidden shadow-2xl"
           >
             <div className="absolute inset-0 bg-blue-500/10 blur-[50px] rounded-full opacity-50 group-hover:opacity-100 transition-opacity duration-700" />
-            
             <p className="text-xs font-bold uppercase tracking-[0.2em] mb-6 text-white/50 relative z-10">System Health</p>
-            
             <div className="relative mb-5 z-10">
               <CircleRing pct={todayScore} size={130} strokeWidth={8} color="#3b82f6" dropShadow="drop-shadow(0 0 15px rgba(59,130,246,0.5))" />
               <div className="absolute inset-0 flex flex-col items-center justify-center">
                 <span className="text-4xl font-bold tracking-tighter text-white">{todayScore}</span>
               </div>
             </div>
-            
             <div className="px-4 py-1.5 rounded-full text-[10px] font-bold tracking-[0.1em] uppercase bg-white/5 border border-white/10 text-white/70 relative z-10 group-hover:border-blue-500/30 group-hover:bg-blue-500/10 transition-colors">
               {todayScore >= 80 ? 'Optimal' : todayScore >= 60 ? 'Stable' : 'Critical'}
             </div>
@@ -218,7 +205,6 @@ const Dashboard: React.FC<DashboardProps> = ({ stats, activities, nutrition }) =
           />
         </motion.section>
 
-        {/* QUICK ACTIONS */}
         <motion.section variants={containerVariants} initial="hidden" animate="visible" className="grid grid-cols-2 md:grid-cols-4 gap-4 relative z-10">
           {[
             { label: 'Log Workout', Icon: Play, hoverBase: 'hover:border-blue-500/50 hover:bg-blue-500/10 hover:shadow-[0_0_20px_rgba(59,130,246,0.2)] text-blue-400' },
@@ -236,7 +222,6 @@ const Dashboard: React.FC<DashboardProps> = ({ stats, activities, nutrition }) =
           ))}
         </motion.section>
 
-        {/* CHARTS & LOGS */}
         <motion.div variants={containerVariants} initial="hidden" animate="visible" className="grid grid-cols-1 lg:grid-cols-3 gap-6 relative z-10">
           <motion.div variants={itemVariants} className="lg:col-span-2 p-8 rounded-[2rem] border border-white/5 bg-[#030303] shadow-2xl">
             <div className="flex items-center justify-between mb-10">
@@ -268,7 +253,6 @@ const Dashboard: React.FC<DashboardProps> = ({ stats, activities, nutrition }) =
             </div>
           </motion.div>
 
-          {/* Recent Logs */}
           <motion.div variants={itemVariants} className="p-8 rounded-[2rem] border border-white/5 bg-[#030303] shadow-2xl flex flex-col">
             <h3 className="text-xl font-medium tracking-tight text-white mb-8">System Logs</h3>
             <div className="flex-1 overflow-auto pr-2 custom-scrollbar space-y-4">
@@ -284,15 +268,15 @@ const Dashboard: React.FC<DashboardProps> = ({ stats, activities, nutrition }) =
                   {recentActivities.map((a, i) => (
                     <motion.div key={i} variants={itemVariants} className="group flex items-center gap-4 p-4 rounded-2xl border border-white/5 bg-white/[0.02] hover:bg-white/[0.05] hover:border-white/10 transition-all">
                       <div className="p-3 rounded-xl flex-shrink-0 bg-blue-500/10 text-blue-400 border border-blue-500/20 group-hover:scale-110 transition-transform">
-                      <Dumbbell size={18} />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="font-semibold text-sm text-white truncate">{a.type}</p>
-                      <p className="text-[10px] font-bold tracking-widest uppercase text-white/40 mt-1">{a.durationMinutes} minutes</p>
-                    </div>
-                    <div className="text-right">
-                      <p className="font-bold text-lg text-blue-400">{a.caloriesBurned}</p>
-                      <p className="text-[9px] font-bold tracking-[0.2em] text-white/30">KCAL</p>
+                        <Dumbbell size={18} />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-semibold text-sm text-white truncate">{a.type}</p>
+                        <p className="text-[10px] font-bold tracking-widest uppercase text-white/40 mt-1">{a.durationMinutes} minutes</p>
+                      </div>
+                      <div className="text-right">
+                        <p className="font-bold text-lg text-blue-400">{a.caloriesBurned}</p>
+                        <p className="text-[9px] font-bold tracking-[0.2em] text-white/30">KCAL</p>
                       </div>
                     </motion.div>
                   ))}

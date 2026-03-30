@@ -50,3 +50,84 @@
     animation: shimmer 2.5s infinite linear;
   }
 }
+
+/* Global pink theme surface overrides for existing dark utility-heavy pages */
+.pink-theme-view {
+  background: #f6edf2;
+}
+
+.pink-theme-view [class*="bg-[#010101]"] {
+  background-color: #f6edf2 !important;
+}
+
+.pink-theme-view [class*="bg-[#030303]"] {
+  background-color: #fbf7f9 !important;
+}
+
+.pink-theme-view [class*="bg-[#050505]"] {
+  background-color: #ffffff !important;
+}
+
+.pink-theme-view [class*="bg-white/[0.02]"],
+.pink-theme-view [class*="bg-white/[0.03]"],
+.pink-theme-view [class*="bg-white/[0.05]"] {
+  background-color: #fff7fa !important;
+}
+
+.pink-theme-view [class*="border-white/5"] {
+  border-color: #edd8e1 !important;
+}
+
+.pink-theme-view [class*="border-white/10"] {
+  border-color: #e8d0da !important;
+}
+
+.pink-theme-view [class*="border-white/20"] {
+  border-color: #ddb9c8 !important;
+}
+
+.pink-theme-view [class*="text-white"] {
+  color: #1f2a44 !important;
+}
+
+.pink-theme-view [class*="text-white/80"] {
+  color: #4f5f7c !important;
+}
+
+.pink-theme-view [class*="text-white/70"] {
+  color: #61708b !important;
+}
+
+.pink-theme-view [class*="text-white/60"] {
+  color: #6f7e98 !important;
+}
+
+.pink-theme-view [class*="text-white/50"] {
+  color: #7f8ca3 !important;
+}
+
+.pink-theme-view [class*="text-white/40"] {
+  color: #8c98ae !important;
+}
+
+.pink-theme-view [class*="text-white/30"] {
+  color: #9eabc0 !important;
+}
+
+.pink-theme-view [class*="text-white/20"] {
+  color: #aebacd !important;
+}
+
+.pink-theme-view [class*="text-white/10"] {
+  color: #bbc5d6 !important;
+}
+
+.pink-theme-view [class*="shadow-2xl"],
+.pink-theme-view [class*="shadow-xl"] {
+  box-shadow: 0 12px 30px rgba(210, 165, 186, 0.18) !important;
+}
+
+.pink-theme-view [class*="selection:bg-blue-500/30"],
+.pink-theme-view [class*="selection:bg-emerald-500/30"] {
+  --tw-selection-bg: rgba(236, 72, 153, 0.2) !important;
+}

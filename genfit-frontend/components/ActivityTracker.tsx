@@ -100,10 +100,10 @@ const ActivityTracker: React.FC<ActivityTrackerProps> = ({ addActivity, activiti
   };
 
   return (
-    <div className="w-full min-h-screen bg-[#010101] text-white px-4 md:px-8 lg:px-12 py-8 md:py-12 overflow-x-hidden selection:bg-blue-500/30">
+    <div className="w-full min-h-screen bg-[#06142d] text-white px-4 md:px-8 lg:px-12 py-8 md:py-12 overflow-x-hidden selection:bg-blue-500/30">
       
       {/* Ambient Glow */}
-      <div className="fixed top-[-20%] left-[-10%] w-[50vw] h-[50vw] bg-sky-600/10 blur-[150px] rounded-full pointer-events-none" />
+      <div className="fixed top-[-20%] left-[-10%] w-[50vw] h-[50vw] bg-blue-600/15 blur-[150px] rounded-full pointer-events-none" />
 
       <div className="relative w-full max-w-[1400px] mx-auto flex flex-col gap-8 md:gap-10">
         
@@ -132,7 +132,7 @@ const ActivityTracker: React.FC<ActivityTrackerProps> = ({ addActivity, activiti
             {/* Quick Entry Glass Card */}
             <motion.div
               initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
-              className="p-8 rounded-[2.5rem] bg-[#030303] border border-white/5 shadow-2xl relative overflow-hidden"
+              className="p-8 rounded-[2.5rem] bg-[#071733] border border-blue-300/10 shadow-2xl relative overflow-hidden"
             >
               <div className="mb-6 flex items-center justify-between">
                 <div>
@@ -185,7 +185,7 @@ const ActivityTracker: React.FC<ActivityTrackerProps> = ({ addActivity, activiti
                   <AnimatePresence>
                     {showExerciseSearch && (
                       <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
-                        className="absolute z-30 mt-2 w-[300px] rounded-2xl border border-white/10 bg-[#0A0A0A] shadow-2xl overflow-hidden max-h-64 overflow-y-auto custom-scrollbar"
+                        className="absolute z-30 mt-2 w-[300px] rounded-2xl border border-blue-300/20 bg-[#0b2044] shadow-2xl overflow-hidden max-h-64 overflow-y-auto custom-scrollbar"
                       >
                         {visibleExercises.length === 0 ? (
                           <div className="px-5 py-4 text-sm text-white/40">No protocols found</div>
@@ -265,28 +265,28 @@ const ActivityTracker: React.FC<ActivityTrackerProps> = ({ addActivity, activiti
 
             {/* Quick Stats Grid */}
             <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }} className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-              <div className="p-6 rounded-2xl bg-[#030303] border border-white/5 flex flex-col justify-between overflow-hidden relative group hover:border-white/10 transition-colors">
-                <p className="text-[10px] font-bold uppercase tracking-widest text-white/40 mb-2">Today's Duration</p>
-                <div className="flex items-end gap-1"><span className="text-3xl font-bold text-white group-hover:text-blue-400 transition-colors">{totalDurationToday}</span><span className="text-sm font-medium text-white/30 pb-1">m</span></div>
+              <div className="p-6 rounded-2xl bg-white border border-[#d6e3f8] flex flex-col justify-between overflow-hidden relative group hover:border-[#b9cff0] transition-colors shadow-[0_10px_24px_rgba(38,72,133,0.08)]">
+                <p className="text-[10px] font-bold uppercase tracking-widest text-[#6f83a4] mb-2">Today's Duration</p>
+                <div className="flex items-end gap-1"><span className="text-3xl font-bold text-[#1f2a44] group-hover:text-blue-500 transition-colors">{totalDurationToday}</span><span className="text-sm font-medium text-[#8fa2c1] pb-1">m</span></div>
               </div>
-              <div className="p-6 rounded-2xl bg-[#030303] border border-white/5 flex flex-col justify-between overflow-hidden relative group hover:border-white/10 transition-colors">
-                <p className="text-[10px] font-bold uppercase tracking-widest text-white/40 mb-2">Calories Output</p>
-                <div className="flex items-end gap-1"><span className="text-3xl font-bold text-white group-hover:text-sky-400 transition-colors">{totalCaloriesToday}</span><span className="text-sm font-medium text-white/30 pb-1">kcal</span></div>
+              <div className="p-6 rounded-2xl bg-[#eaf3ff] border border-[#c9dbf6] flex flex-col justify-between overflow-hidden relative group hover:border-[#aecaef] transition-colors shadow-[0_10px_24px_rgba(38,72,133,0.08)]">
+                <p className="text-[10px] font-bold uppercase tracking-widest text-[#6f83a4] mb-2">Calories Output</p>
+                <div className="flex items-end gap-1"><span className="text-3xl font-bold text-[#1f2a44] group-hover:text-sky-500 transition-colors">{totalCaloriesToday}</span><span className="text-sm font-medium text-[#8fa2c1] pb-1">kcal</span></div>
               </div>
-              <div className="p-6 rounded-2xl bg-[#030303] border border-white/5 flex flex-col justify-between overflow-hidden relative group hover:border-white/10 transition-colors">
-                <p className="text-[10px] font-bold uppercase tracking-widest text-white/40 mb-2">Total Sessions</p>
-                <div className="flex items-end gap-1"><span className="text-3xl font-bold text-white">{todayActivities.length}</span></div>
+              <div className="p-6 rounded-2xl bg-white border border-[#d6e3f8] flex flex-col justify-between overflow-hidden relative group hover:border-[#b9cff0] transition-colors shadow-[0_10px_24px_rgba(38,72,133,0.08)]">
+                <p className="text-[10px] font-bold uppercase tracking-widest text-[#6f83a4] mb-2">Total Sessions</p>
+                <div className="flex items-end gap-1"><span className="text-3xl font-bold text-[#1f2a44]">{todayActivities.length}</span></div>
               </div>
-              <div className="p-6 rounded-2xl bg-[#030303] border border-white/5 flex flex-col justify-between overflow-hidden relative group hover:border-white/10 transition-colors">
-                <p className="text-[10px] font-bold uppercase tracking-widest text-white/40 mb-2">Max Intensity</p>
-                <div className="flex items-end gap-1"><span className="text-3xl font-bold text-white">{todayActivities.length > 0 ? (todayActivities.some(a => a.intensity === 'High') ? 'High' : 'Med') : '-'}</span></div>
+              <div className="p-6 rounded-2xl bg-[#eaf3ff] border border-[#c9dbf6] flex flex-col justify-between overflow-hidden relative group hover:border-[#aecaef] transition-colors shadow-[0_10px_24px_rgba(38,72,133,0.08)]">
+                <p className="text-[10px] font-bold uppercase tracking-widest text-[#6f83a4] mb-2">Max Intensity</p>
+                <div className="flex items-end gap-1"><span className="text-3xl font-bold text-[#1f2a44]">{todayActivities.length > 0 ? (todayActivities.some(a => a.intensity === 'High') ? 'High' : 'Med') : '-'}</span></div>
               </div>
             </motion.div>
 
             {/* Weekly Trajectory Chart */}
-            <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="p-8 rounded-[2rem] bg-[#030303] border border-white/5 shadow-xl">
-              <h2 className="text-xl font-medium text-white mb-8 tracking-tight flex items-center gap-3">
-                <BarChart3 size={20} className="text-sky-400" /> Output Trajectory
+            <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="p-8 rounded-[2rem] bg-[#eaf3ff] border border-[#c9dbf6] shadow-xl">
+              <h2 className="text-xl font-medium text-[#1f2a44] mb-8 tracking-tight flex items-center gap-3">
+                <BarChart3 size={20} className="text-blue-500" /> Output Trajectory
               </h2>
               <div className="h-64">
                 <ResponsiveContainer width="100%" height="100%">
@@ -301,13 +301,13 @@ const ActivityTracker: React.FC<ActivityTrackerProps> = ({ addActivity, activiti
                         <stop offset="100%" stopColor="#3b82f6" stopOpacity={0.8} />
                       </linearGradient>
                     </defs>
-                    <CartesianGrid strokeDasharray="4 4" vertical={false} stroke="rgba(255,255,255,0.03)" />
-                    <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#64748b', fontWeight: 'bold' }} dy={10} />
-                    <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#64748b', fontWeight: 'bold' }} />
+                    <CartesianGrid strokeDasharray="4 4" vertical={false} stroke="rgba(31,42,68,0.08)" />
+                    <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#5f759a', fontWeight: 'bold' }} dy={10} />
+                    <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#5f759a', fontWeight: 'bold' }} />
                     <Tooltip
-                      cursor={{ fill: 'rgba(255,255,255,0.02)' }}
-                      contentStyle={{ borderRadius: '16px', border: '1px solid rgba(255,255,255,0.1)', background: 'rgba(5,5,5,0.9)', backdropFilter: 'blur(10px)', boxShadow: '0 20px 40px rgba(0, 0, 0, 0.8)' }}
-                      itemStyle={{ color: '#bae6fd', fontWeight: 600 }}
+                      cursor={{ fill: 'rgba(59,130,246,0.08)' }}
+                      contentStyle={{ borderRadius: '16px', border: '1px solid rgba(95,117,154,0.25)', background: 'rgba(255,255,255,0.96)', backdropFilter: 'blur(10px)', boxShadow: '0 12px 28px rgba(38,72,133,0.14)' }}
+                      itemStyle={{ color: '#1f3f6f', fontWeight: 600 }}
                     />
                     <Bar dataKey="burn" radius={[6, 6, 0, 0]} barSize={40}>
                       {weeklyData.map((entry, index) => (
@@ -324,32 +324,32 @@ const ActivityTracker: React.FC<ActivityTrackerProps> = ({ addActivity, activiti
           <div className="space-y-8">
             
             {/* History Feed */}
-            <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }} className="p-8 rounded-[2.5rem] bg-[#030303] border border-white/5 shadow-xl flex flex-col h-full max-h-[800px]">
-              <h4 className="text-xl font-medium tracking-tight text-white mb-6 flex items-center gap-3">
-                <Clock size={20} className="text-white/40" /> Today's Log
+            <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }} className="p-8 rounded-[2.5rem] bg-white border border-[#d6e3f8] shadow-xl flex flex-col h-full max-h-[800px]">
+              <h4 className="text-xl font-medium tracking-tight text-[#1f2a44] mb-6 flex items-center gap-3">
+                <Clock size={20} className="text-[#6f83a4]" /> Today's Log
               </h4>
 
               <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar space-y-3">
                 {todayActivities.length === 0 ? (
                   <div className="text-center py-20 flex flex-col items-center">
-                    <div className="p-4 rounded-full bg-white/5 border border-white/10 mb-4"><Activity className="text-white/30" /></div>
-                    <p className="text-xs font-bold uppercase tracking-widest text-white/30">System Idle</p>
+                    <div className="p-4 rounded-full bg-[#eaf3ff] border border-[#c9dbf6] mb-4"><Activity className="text-[#6f83a4]" /></div>
+                    <p className="text-xs font-bold uppercase tracking-widest text-[#7286a6]">System Idle</p>
                   </div>
                 ) : (
                   todayActivities.map((activity, i) => (
                     <motion.div
                       initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.05 }}
                       key={activity.id}
-                      className="group p-5 rounded-2xl border border-white/5 bg-white/[0.02] hover:bg-white/[0.05] hover:border-white/10 transition-all flex items-center justify-between gap-4"
+                      className="group p-5 rounded-2xl border border-[#d8e5f8] bg-[#edf4ff] hover:bg-white hover:border-[#bfd5f5] transition-all flex items-center justify-between gap-4"
                     >
                       <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
+                        <div className="w-12 h-12 rounded-xl bg-white border border-[#d8e5f8] flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
                           {workoutOptions.find(o => o.name === activity.type)?.icon || '🏃'}
                         </div>
                         <div>
-                          <p className="font-medium text-white text-sm">{activity.type}</p>
+                          <p className="font-medium text-[#1f2a44] text-sm">{activity.type}</p>
                           <div className="flex gap-2 mt-1">
-                            <span className="text-[10px] font-bold text-white/40 uppercase tracking-widest">{activity.durationMinutes}m</span>
+                            <span className="text-[10px] font-bold text-[#7286a6] uppercase tracking-widest">{activity.durationMinutes}m</span>
                             <span className="text-[10px] font-bold uppercase tracking-widest" style={{ color: activity.intensity === 'High' ? '#ef4444' : activity.intensity === 'Medium' ? '#38bdf8' : '#a3e635'}}>
                               {activity.intensity}
                             </span>
@@ -357,8 +357,8 @@ const ActivityTracker: React.FC<ActivityTrackerProps> = ({ addActivity, activiti
                         </div>
                       </div>
                       <div className="text-right">
-                        <p className="font-bold text-lg text-white group-hover:text-sky-400 transition-colors">{activity.caloriesBurned}</p>
-                        <p className="text-[9px] font-bold uppercase tracking-widest text-white/30">KCAL</p>
+                        <p className="font-bold text-lg text-[#1f2a44] group-hover:text-sky-500 transition-colors">{activity.caloriesBurned}</p>
+                        <p className="text-[9px] font-bold uppercase tracking-widest text-[#7286a6]">KCAL</p>
                       </div>
                     </motion.div>
                   ))

@@ -8,7 +8,7 @@ import { ViewState, DailyStats, ActivityData, NutritionData, Theme } from './typ
 import BodyBlueprint from './components/BodyBlueprint';
 import Profile from './components/Profile';
 import Settings from './components/Settings';
-import { Menu, X } from 'lucide-react';
+import { Menu } from 'lucide-react';
 import { listenAuth } from './services/firebaseAuth';
 import LandingPage from "./pages/LandingPage";
 
@@ -179,9 +179,11 @@ const App: React.FC = () => {
         setView={setView} 
         user={user} 
         theme={theme}
+        isMobileMenuOpen={isMobileMenuOpen}
+        onCloseMobileMenu={() => setIsMobileMenuOpen(false)}
       />
 
-      <main className="flex-1 overflow-y-auto w-full">
+      <main className={`flex-1 overflow-y-auto w-full ${theme === 'pink' ? 'pink-theme-view' : ''}`}>
 
         {/* Mobile header */}
         <div className="md:hidden flex justify-between items-center p-4 border-b border-white/10">
@@ -190,14 +192,6 @@ const App: React.FC = () => {
             <Menu className="w-6 h-6" />
           </button>
         </div>
-
-        {isMobileMenuOpen && (
-          <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-md p-6">
-            <button onClick={() => setIsMobileMenuOpen(false)}>
-              <X className="w-8 h-8 text-white" />
-            </button>
-          </div>
-        )}
 
         <div className="w-full h-full">
           {renderView()}
