@@ -1,6 +1,6 @@
 import { DailyStats, ActivityData, NutritionData, BodyProfile } from '../types';
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
+import { API_BASE } from "./apiBase";
 
 const getAuthToken = () => {
     const authRaw = localStorage.getItem("genfit_auth_user");

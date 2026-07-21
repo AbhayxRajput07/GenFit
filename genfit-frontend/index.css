@@ -122,6 +122,72 @@
   color: #bbc5d6 !important;
 }
 
+.pink-theme-view [class*="bg-blue-"] {
+  background-color: rgba(236, 72, 153, 0.1) !important;
+}
+
+.pink-theme-view [class*="text-blue-"] {
+  color: #ec4899 !important;
+}
+
+.pink-theme-view [class*="border-blue-"] {
+  border-color: rgba(236, 72, 153, 0.25) !important;
+}
+
+.pink-theme-view [class*="bg-sky-"] {
+  background-color: rgba(244, 114, 182, 0.1) !important;
+}
+
+.pink-theme-view [class*="text-sky-"] {
+  color: #f472b6 !important;
+}
+
+.pink-theme-view [class*="border-sky-"] {
+  border-color: rgba(244, 114, 182, 0.25) !important;
+}
+
+.pink-theme-view [class*="bg-cyan-"] {
+  background-color: rgba(251, 113, 133, 0.1) !important;
+}
+
+.pink-theme-view [class*="text-cyan-"] {
+  color: #fb7185 !important;
+}
+
+.pink-theme-view [class*="border-cyan-"] {
+  border-color: rgba(251, 113, 133, 0.25) !important;
+}
+
+.pink-theme-view [class*="from-blue-"] {
+  --tw-gradient-from: #ec4899 var(--tw-gradient-from-position) !important;
+  --tw-gradient-to: rgb(236 72 153 / 0) var(--tw-gradient-to-position) !important;
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important;
+}
+
+.pink-theme-view [class*="from-sky-"] {
+  --tw-gradient-from: #f472b6 var(--tw-gradient-from-position) !important;
+  --tw-gradient-to: rgb(244 114 182 / 0) var(--tw-gradient-to-position) !important;
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important;
+}
+
+.pink-theme-view [class*="from-cyan-"] {
+  --tw-gradient-from: #fb7185 var(--tw-gradient-from-position) !important;
+  --tw-gradient-to: rgb(251 113 133 / 0) var(--tw-gradient-to-position) !important;
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important;
+}
+
+.pink-theme-view [class*="to-blue-"] {
+  --tw-gradient-to: #f9a8d4 var(--tw-gradient-to-position) !important;
+}
+
+.pink-theme-view [class*="to-sky-"] {
+  --tw-gradient-to: #fda4af var(--tw-gradient-to-position) !important;
+}
+
+.pink-theme-view [class*="to-cyan-"] {
+  --tw-gradient-to: #fbcfe8 var(--tw-gradient-to-position) !important;
+}
+
 .pink-theme-view [class*="shadow-2xl"],
 .pink-theme-view [class*="shadow-xl"] {
   box-shadow: 0 12px 30px rgba(210, 165, 186, 0.18) !important;
