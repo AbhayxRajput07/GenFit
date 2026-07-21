@@ -15,12 +15,16 @@ interface SettingsProps {
     theme: Theme;
     setTheme: (t: Theme) => void;
     setView: (v: ViewState) => void;
+    onLogout?: () => void;
 }
 
-const Settings: React.FC<SettingsProps> = ({ user, theme, setTheme, setView }) => {
+const Settings: React.FC<SettingsProps> = ({ user, theme, setTheme, setView, onLogout }) => {
     const [activeTab, setActiveTab] = useState<string | null>(null);
     const { language, setLanguage, t } = useLanguage();
-    const handleLogout = async () => { await logoutUser(); setView(ViewState.DASHBOARD); };
+    const handleLogout = async () => {
+        await logoutUser();
+        onLogout?.();
+    };
     const isPink = theme === 'pink';
 
     const themes: { id: Theme; label: string; gradient: string; desc: string }[] = [

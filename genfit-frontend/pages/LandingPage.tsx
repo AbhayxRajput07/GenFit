@@ -179,7 +179,15 @@ const MagneticButton = ({ children, onClick }: { children: React.ReactNode, onCl
 // ────────────────────────────────────────────────────────
 // MAIN LANDING PAGE COMPONENT
 // ────────────────────────────────────────────────────────
-export default function LandingPage({ onEnter }: { onEnter?: () => void }) {
+export default function LandingPage({
+  onEnter,
+  onAuthRequired,
+  isAuthenticated = false,
+}: {
+  onEnter?: () => void;
+  onAuthRequired?: () => void;
+  isAuthenticated?: boolean;
+}) {
   const containerRef = useRef<HTMLDivElement>(null);
   
   // Ultra-optimized scroll translation
@@ -218,6 +226,14 @@ export default function LandingPage({ onEnter }: { onEnter?: () => void }) {
   const ctaOpacity = useTransform(smooth, [0.85, 0.95], [0, 1]);
   const ctaTextY1 = useTransform(smooth, [0.85, 0.95], [100, 0]);
   const ctaTextY2 = useTransform(smooth, [0.88, 0.98], [100, 0]);
+  const handlePrimaryCta = () => {
+    if (isAuthenticated) {
+      onEnter?.();
+      return;
+    }
+
+    onAuthRequired?.();
+  };
 
   return (
     <div ref={containerRef} className="bg-[#010101] text-white font-sans relative selection:bg-blue-500/30" style={{ height: "450vh" }}>
@@ -256,7 +272,7 @@ export default function LandingPage({ onEnter }: { onEnter?: () => void }) {
            <div className="w-2 h-2 rounded-full bg-blue-500 shadow-[0_0_15px_rgba(59,130,246,1)]" />
            <span className="text-xl font-bold tracking-tight text-white select-none">GenFit.</span>
         </div>
-        <button onClick={onEnter} className="pointer-events-auto px-6 py-2 rounded-full bg-white/5 backdrop-blur-xl border border-white/20 text-white text-sm font-medium tracking-wide hover:bg-white hover:text-black transition-colors duration-500 shadow-[0_0_10px_rgba(255,255,255,0.05)]">
+        <button onClick={handlePrimaryCta} className="pointer-events-auto px-6 py-2 rounded-full bg-white/5 backdrop-blur-xl border border-white/20 text-white text-sm font-medium tracking-wide hover:bg-white hover:text-black transition-colors duration-500 shadow-[0_0_10px_rgba(255,255,255,0.05)]">
           Enter App
         </button>
       </motion.nav>
@@ -447,7 +463,7 @@ export default function LandingPage({ onEnter }: { onEnter?: () => void }) {
              </motion.h2>
           </div>
           
-          <MagneticButton onClick={onEnter}>
+           <MagneticButton onClick={handlePrimaryCta}>
              BEGIN
           </MagneticButton>
           

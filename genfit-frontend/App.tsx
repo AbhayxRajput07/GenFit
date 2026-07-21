@@ -11,6 +11,8 @@ import Settings from './components/Settings';
 import { Menu } from 'lucide-react';
 import { listenAuth } from './services/firebaseAuth';
 import LandingPage from "./pages/LandingPage";
+import AuthPage from './pages/AuthPage';
+import ProtectedRoute from './components/ProtectedRoute';
 
 const App: React.FC = () => {
   const [currentView, setView] = useState<ViewState>(ViewState.DASHBOARD);
@@ -20,6 +22,7 @@ const App: React.FC = () => {
     return (saved as Theme) || 'blue';
   });
   const [user, setUser] = useState<any>(null);
+  const [showAuthPage, setShowAuthPage] = useState(false);
   const [bodyProfile, setBodyProfile] = useState<any>(() => {
     const saved = localStorage.getItem('bodyProfile');
     return saved ? JSON.parse(saved) : null;
@@ -54,6 +57,23 @@ const App: React.FC = () => {
 
   const updateWater = (amount: number) => {
     setStats(prev => ({ ...prev, waterMl: prev.waterMl + amount }));
+  };
+
+  const handleEnterApp = () => {
+    setShowLanding(false);
+    setShowAuthPage(false);
+  };
+
+  const handleAuthRedirect = () => {
+    setShowLanding(false);
+    setShowAuthPage(true);
+  };
+
+  const handleLogoutComplete = () => {
+    setShowAuthPage(false);
+    setShowLanding(true);
+    setView(ViewState.DASHBOARD);
+    setIsMobileMenuOpen(false);
   };
 
   // Firebase auth listener
@@ -158,6 +178,7 @@ const App: React.FC = () => {
             theme={theme} 
             setTheme={setTheme} 
             setView={setView} 
+            onLogout={handleLogoutComplete}
           />
         );
 
@@ -168,37 +189,66 @@ const App: React.FC = () => {
 
   // ⭐ Landing page first
   if (showLanding) {
-    return <LandingPage onEnter={() => setShowLanding(false)} />;
+    return (
+      <LandingPage
+        onEnter={handleEnterApp}
+        onAuthRequired={handleAuthRedirect}
+        isAuthenticated={!!user}
+      />
+    );
+  }
+
+  if (showAuthPage) {
+    return (
+      <AuthPage
+        onAuthenticated={handleEnterApp}
+        onBackToLanding={() => {
+          setShowAuthPage(false);
+          setShowLanding(true);
+        }}
+      />
+    );
   }
 
   return (
-    <div className="flex min-h-screen w-full bg-[#010101] text-white transition-colors duration-700">
-      
-      <Navigation 
-        currentView={currentView} 
-        setView={setView} 
-        user={user} 
-        theme={theme}
-        isMobileMenuOpen={isMobileMenuOpen}
-        onCloseMobileMenu={() => setIsMobileMenuOpen(false)}
-      />
+    <ProtectedRoute
+      isAllowed={!!user}
+      fallback={
+        <LandingPage
+          onEnter={handleEnterApp}
+          onAuthRequired={handleAuthRedirect}
+          isAuthenticated={false}
+        />
+      }
+    >
+      <div className="flex min-h-screen w-full bg-[#010101] text-white transition-colors duration-700">
+        
+        <Navigation 
+          currentView={currentView} 
+          setView={setView} 
+          user={user} 
+          theme={theme}
+          isMobileMenuOpen={isMobileMenuOpen}
+          onCloseMobileMenu={() => setIsMobileMenuOpen(false)}
+        />
 
-      <main className={`flex-1 overflow-y-auto w-full ${theme === 'pink' ? 'pink-theme-view' : ''}`}>
+        <main className={`flex-1 overflow-y-auto w-full ${theme === 'pink' ? 'pink-theme-view' : ''}`}>
 
-        {/* Mobile header */}
-        <div className="md:hidden flex justify-between items-center p-4 border-b border-white/10">
-          <h1 className="text-xl font-bold">GenFit.</h1>
-          <button onClick={() => setIsMobileMenuOpen(true)}>
-            <Menu className="w-6 h-6" />
-          </button>
-        </div>
+          {/* Mobile header */}
+          <div className="md:hidden flex justify-between items-center p-4 border-b border-white/10">
+            <h1 className="text-xl font-bold">GenFit.</h1>
+            <button onClick={() => setIsMobileMenuOpen(true)}>
+              <Menu className="w-6 h-6" />
+            </button>
+          </div>
 
-        <div className="w-full h-full">
-          {renderView()}
-        </div>
+          <div className="w-full h-full">
+            {renderView()}
+          </div>
 
-      </main>
-    </div>
+        </main>
+      </div>
+    </ProtectedRoute>
   );
 };
 

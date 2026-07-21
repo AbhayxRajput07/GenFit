@@ -3,7 +3,7 @@ import { ViewState, Theme } from '../types';
 import { LayoutDashboard, Utensils, Activity, Bot, User, X, UserRound, Settings } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLanguage } from '../contexts/LanguageContext';
-import { signupUser, loginUser } from '../services/firebaseAuth';
+import { signupUser, loginUser, signInWithGoogle } from '../services/firebaseAuth';
 
 interface NavigationProps {
   currentView: ViewState;
@@ -98,6 +98,19 @@ const Navigation: React.FC<NavigationProps> = ({
       setShowAccount(false);
     } catch (err: any) { alert(err.message || t('auth.errors.generic')); }
     finally { setLoading(false); }
+  };
+
+  const handleGoogleSignIn = async () => {
+    try {
+      setLoading(true);
+      await signInWithGoogle();
+      alert(t('auth.errors.logged_in'));
+      setShowAccount(false);
+    } catch (err: any) {
+      alert(err.message || t('auth.errors.generic'));
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleViewChange = (view: ViewState) => {
@@ -305,6 +318,14 @@ const Navigation: React.FC<NavigationProps> = ({
                       className={`w-full border rounded-2xl px-5 py-4 font-medium focus:outline-none transition-all ${isPink ? 'bg-[#fff3f8] border-pink-200/80 text-[#1f2a44] placeholder-[#9aa7bd] focus:border-pink-400' : 'bg-white/[0.03] border-white/10 text-white placeholder-white/20 focus:border-blue-500/50 focus:bg-white/[0.05]'}`}
                     />
                   </div>
+                  <button
+                    type="button"
+                    onClick={handleGoogleSignIn}
+                    disabled={loading}
+                    className={`w-full py-4 rounded-2xl font-bold text-sm tracking-[0.16em] uppercase transition-all active:scale-95 disabled:opacity-70 border ${isPink ? 'border-pink-200/80 bg-white text-[#1f2a44] hover:bg-pink-50' : 'border-white/10 bg-white/[0.03] text-white hover:bg-white/[0.06]'}`}
+                  >
+                    {loading ? t('auth.processing') || 'Processing...' : 'Sign in with Google'}
+                  </button>
                   <button 
                     onClick={handleSubmit} disabled={loading}
                     className={`w-full py-4 mt-4 rounded-2xl font-bold text-sm tracking-[0.2em] uppercase transition-all active:scale-95 disabled:opacity-70 ${isPink ? 'text-[#1f2a44] shadow-[0_8px_0px_rgba(0,0,0,0.9)] hover:translate-y-[-1px] bg-gradient-to-r from-pink-300 to-pink-400 border-2 border-[#1f2a44]' : 'text-white shadow-[0_0_30px_rgba(59,130,246,0.3)] hover:shadow-[0_0_50px_rgba(59,130,246,0.5)] hover:-translate-y-0.5 bg-gradient-to-r from-blue-600 to-blue-500'}`}

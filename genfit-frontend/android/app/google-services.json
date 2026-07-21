@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "43193260670",
+    "project_id": "genfit-eb7da",
+    "storage_bucket": "genfit-eb7da.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:43193260670:android:bdd15a83d66282d7f6962f",
+        "android_client_info": {
+          "package_name": "com.abhay.genfit"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "43193260670-696n8t7cakk05vb3768f7imvmsdd0ilp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDyG6q4Z7uBfArJrQnqsR4ANpZZHOXG-uY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "43193260670-696n8t7cakk05vb3768f7imvmsdd0ilp.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
