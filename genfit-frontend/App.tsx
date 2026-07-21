@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useLayoutEffect } from 'react';
 import Navigation from './components/Navigation';
 import Dashboard from './components/Dashboard';
 import NutritionTracker from './components/NutritionTracker';
@@ -14,46 +14,52 @@ import LandingPage from "./pages/LandingPage";
 import AuthPage from './pages/AuthPage';
 import ProtectedRoute from './components/ProtectedRoute';
 
+const STORAGE_PREFIX = 'genfit_user_state';
+
+const buildStorageKey = (scope: string, key: string) => `${STORAGE_PREFIX}:${scope}:${key}`;
+
+const readStoredValue = <T,>(key: string, fallback: T): T => {
+  const raw = localStorage.getItem(key);
+  if (!raw) return fallback;
+
+  try {
+    return JSON.parse(raw) as T;
+  } catch {
+    localStorage.removeItem(key);
+    return fallback;
+  }
+};
+
 const App: React.FC = () => {
   const [currentView, setView] = useState<ViewState>(ViewState.DASHBOARD);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [theme, setTheme] = useState<Theme>(() => {
-    const saved = localStorage.getItem('genfit_theme');
-    return (saved as Theme) || 'blue';
-  });
+  const [theme, setTheme] = useState<Theme>('blue');
   const [user, setUser] = useState<any>(null);
   const [showAuthPage, setShowAuthPage] = useState(false);
-  const [bodyProfile, setBodyProfile] = useState<any>(() => {
-    const saved = localStorage.getItem('bodyProfile');
-    return saved ? JSON.parse(saved) : null;
-  });
+  const [bodyProfile, setBodyProfile] = useState<any>(null);
 
   // ⭐ Landing page toggle
   const [showLanding, setShowLanding] = useState(true);
 
   // 🔥 Activities persistent storage
-  const [activities, setActivities] = useState<ActivityData[]>(() => {
-    const saved = localStorage.getItem('activities');
-    return saved ? JSON.parse(saved) : [];
-  });
+  const [activities, setActivities] = useState<ActivityData[]>([]);
 
   // 🔥 Nutrition persistent storage
-  const [nutrition, setNutrition] = useState<NutritionData[]>(() => {
-    const saved = localStorage.getItem('nutrition');
-    return saved ? JSON.parse(saved) : [];
-  });
+  const [nutrition, setNutrition] = useState<NutritionData[]>([]);
 
   // 🔥 Daily stats
   const [stats, setStats] = useState<DailyStats>({
-    steps: 8432,
+    steps: 0,
     stepsGoal: 10000,
     caloriesIn: 0,
-    caloriesOut: 450,
+    caloriesOut: 0,
     calorieGoal: 2500,
-    waterMl: 1250,
+    waterMl: 0,
     waterTarget: 3000,
-    sleepHours: 7.5,
+    sleepHours: 0,
   });
+
+  const storageScope = user?.id ? `user_${user.id}` : 'guest';
 
   const updateWater = (amount: number) => {
     setStats(prev => ({ ...prev, waterMl: prev.waterMl + amount }));
@@ -76,6 +82,23 @@ const App: React.FC = () => {
     setIsMobileMenuOpen(false);
   };
 
+  useLayoutEffect(() => {
+    setTheme(readStoredValue(buildStorageKey(storageScope, 'theme'), 'blue'));
+    setBodyProfile(readStoredValue(buildStorageKey(storageScope, 'bodyProfile'), null));
+    setActivities(readStoredValue(buildStorageKey(storageScope, 'activities'), []));
+    setNutrition(readStoredValue(buildStorageKey(storageScope, 'nutrition'), []));
+    setStats(readStoredValue(buildStorageKey(storageScope, 'stats'), {
+      steps: 0,
+      stepsGoal: 10000,
+      caloriesIn: 0,
+      caloriesOut: 0,
+      calorieGoal: 2500,
+      waterMl: 0,
+      waterTarget: 3000,
+      sleepHours: 0,
+    }));
+  }, [storageScope]);
+
   // Firebase auth listener
   useEffect(() => {
     const unsub = listenAuth((u: any) => setUser(u));
@@ -84,23 +107,23 @@ const App: React.FC = () => {
 
   // Save activities
   useEffect(() => {
-    localStorage.setItem('activities', JSON.stringify(activities));
-  }, [activities]);
+    localStorage.setItem(buildStorageKey(storageScope, 'activities'), JSON.stringify(activities));
+  }, [activities, storageScope]);
 
   // Save nutrition
   useEffect(() => {
-    localStorage.setItem('nutrition', JSON.stringify(nutrition));
-  }, [nutrition]);
+    localStorage.setItem(buildStorageKey(storageScope, 'nutrition'), JSON.stringify(nutrition));
+  }, [nutrition, storageScope]);
 
   // Save body profile
   useEffect(() => {
-    localStorage.setItem('bodyProfile', JSON.stringify(bodyProfile));
-  }, [bodyProfile]);
+    localStorage.setItem(buildStorageKey(storageScope, 'bodyProfile'), JSON.stringify(bodyProfile));
+  }, [bodyProfile, storageScope]);
 
   // Save theme
   useEffect(() => {
-    localStorage.setItem('genfit_theme', theme);
-  }, [theme]);
+    localStorage.setItem(buildStorageKey(storageScope, 'theme'), theme);
+  }, [theme, storageScope]);
 
   // Auto stats calculation
   useEffect(() => {
@@ -110,9 +133,13 @@ const App: React.FC = () => {
     setStats(prev => ({
       ...prev,
       caloriesIn: totalCaloriesIn,
-      caloriesOut: 450 + activityBurn,
+      caloriesOut: activityBurn,
     }));
   }, [nutrition, activities]);
+
+  useEffect(() => {
+    localStorage.setItem(buildStorageKey(storageScope, 'stats'), JSON.stringify(stats));
+  }, [stats, storageScope]);
 
   const renderView = () => {
     // Add theme as key to force re-mount and fresh color evaluation
